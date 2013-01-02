@@ -1,0 +1,389 @@
+What is Perl?
+
+Wikipedia: Perl is a high-level, general-purpose, interpreted, dynamic programming language.
+
+What?  Perl is a kick ass scripting language.  Meaning programs don't need to be compiled before running.  Perl programs are compiled at runtime, making it a great cross-platform language.
+
+It has very powerful regular expression implementation, which makes it great for processing files.
+
+It doesn't have strong graphics capabilities (there is a module called PerlTK to create GUIs in Perl) so it is typically run from the command line.
+
+
+Why do I like Perl?  It's very powerful, yet easy and quick to write and debug, and can be run just about anywhere.  I am usually wanting to analyze, modify, and/or generate files - Perl is ideal for this.
+
+
+Perl is not well-suited for every task.
+
+If you want to do have interactive graphics, take a look at Processing.
+
+If you wan to do interactive audio, take a look at Pure Data.
+
+
+
+What you need:
+
+Perl
+if you have a Mac or Linux machine, it's already there
+Download ActivePerl community edition for Windows
+http://www.activestate.com/activeperl/downloads
+
+Text editor
+Any basic text editor will do, but you really want one that is designed for programming
+TextWrangler is free for the Mac
+BBEdit is worth the $50 if you can afford it and do a lot of this stuff
+http://barebones.com/
+Notepad++ is free for Windows
+http://notepad-plus-plus.org/
+TextPad is not free, but is only $27 and is a little more robust
+http://www.textpad.com/
+
+
+Create a text file named 01_hello_world.pl and type:
+
+print "Hello, World!\n";
+
+save the file and from the command line and type:
+
+$ perl 01_Hello_World.pl
+
+hit enter and you'll see:
+
+Hello, World!
+
+What is "\n"?  It's a escaped character, in this case a newline.  It adds a LF or CF/LF depending on what computer is being used.  If you didn't include this, the next command line prompt would come right after the output of the program:
+
+$ perl 01_Hello_World.pl
+Hello, World!$ perl 01_Hello_World.pl
+Hello, World!$
+
+This isn't very pretty and can get confusing.  A good rule of thumb is to make sure you always output a \n at the end of your program's output. There are lots of escape characters that do similar things.
+
+Also notice that the line ends with a semicolon.  Statements end with semicolons in Perl (except when they don't).  Perl doesn't care too much about (extra) whitespace but it relies on semicolons to know where your lines of program begin and end.
+
+First rule of Perl is there's always a half dozen ways to do things. And chances are, there is always a shorter way to do things.  In fact, you can do the Hello World program on the command line without a file at all:
+
+$ perl -e 'print "Hello, World!\n";'
+
+But most useful programs are too complex to do inline.  So we'll do it the long way.
+
+02_hello_world.pl:
+
+#!/usr/bin/perl
+use strict;          # enforce good programming practices
+
+print "Hello, World!\n";
+
+We're adding a few things here:
+
+Comments are started with '#'.  Everything on a line after a '#' is ignored, and can be used for explanation or notes
+
+The exception is #!/usr/bin/perl - this tells the computer what program to use to interpret the file.  This is not particularly useful for Windows, which doesn't know anything about shells and whatnot.  But it's good practice to include it anyway.  For LInux or the Mac, it allows you to skip the "perl" part in the command.  But you may have to change the path listed to match where Perl is installed.
+
+$ ./02_hello_world.pl
+Hello, World!
+
+On Linux and Mac OS, you need to make sure the .pl file is set as an executable, which you can do using the chmod command:
+
+$ chmod a+x *.pl
+
+Perl has a module mechanism. Modules are invoked with "use".  In this case, "strict" is a pseudo module, but rather a compiler directive, telling Perl to require some things that are good programming practices anyway.  Including "use strict" will keep you from making mistakes and help troubleshoot errors.
+
+
+What Is Programming?
+
+Programming is telling a computer what to do.  Computers can only do a few things:
+
+1) read/write data into memory
+2) add two numbers together
+3) make decisions based on the result of these two things
+
+Perl, like any programming language, has built-in functions which does combinations of the above things to accomplish specific things.  "print" is one of these - it output a string.
+
+Data is written into and read from variables, which are just locations in the computer's memory.
+
+Other math functions (subtraction, multiplication, division, etc) are just repeated addition.
+
+The decision making component is called flow control. You can compare the value of data in memory, or the output of a function, or the result of a math calculation, and then do one of a number of things as a result.
+
+Perl is a procedural programming language. Each program starts at the top and proceeds down line by line. You can skip forwards and back with conditional operators, code blocks, and subroutines.
+
+
+Another cool thing about Perl is you don't have to worry too much about how your data is represented.  Some languages like C have multiple variable types which store data in different ways.  Perl only really has one type - called a scalar.  There are also arrays, which are a collection of scalars.  There is a special type of array called a hash, which is one of the great features of Perl.
+
+Scalar variables start with a '$'.  Arrays start with an '@'.  Hashes start with a '%'.
+
+Variables have to be declared before use. You use the "my" keyword to declare variables.  A single "my" can declare multiple variables when enclosed in parenthesis:
+
+my $variable;
+my ( $foo, $bar );
+
+
+You put data into or read data from a variable with the '=' operator:
+
+$variable = "blah";
+$foo = $variable;
+$bar = 42;
+
+The operation depends on which side of the '=' the variable is on.  Read on the right, write on the left.
+
+Perl has a bunch of specialized variables, like $_, $1, @ARGV (and many more).  You cannot name a variable the same as one of these special variables, but you can use any alphanumeric string as a variable name.  Variable names, like everything in Perl, are case-sensitive.
+
+
+Expressions
+
+A variable isn't the only thing that can be on the right of the equal sign.  A variable used this way is one form of an expression, and any expression can be used on the right side of the equal sign.
+
+Other types of expressions are strings ("Hello, World!\n"), arithmetic (1+1), conditional operators, and the output of functions (built-in or user defined).
+
+We illustrate the various types of expressions in 06_expressions.pl:
+
+#!/usr/bin/perl
+use strict;
+
+my $helloworld = "Hello, World!";     # assigning string at time of delcaration
+my ( $i, $j );
+my $result;
+my ( $foo, $bar );
+
+$i = 0;                               # assigning a number to a scalar
+$bar = $i + 42;                       # assigning the result of an arithmetic expression
+$foo = $bar;                          # assigning the value of a variable
+$result = print "$helloworld\n";      # assigning the output of a function
+$j = ( $i == 0 );                     # assigning the result of a conditional operator
+
+print "The result of the print function is: \"$result\"\n";print "\$i: \"$i\"\n";
+print "\$j: \"$j\"\n";
+print "\$foo: \"$foo\"\n";
+print "\$bar: \"$bar\"\n";
+
+
+Which results in this output:
+
+$ perl 06_expressions.pl
+Hello, World!
+The result of the print function is: "1"
+$i: "0"
+$j: "1"
+$foo: "42"
+$bar: "42"
+
+As mentioned before, we can declare more than one variable with a single "my" by making them a list and enclosing them in parenthesis.
+
+Next we have some examples of different types of expressions being assigned to variables.
+
+$i = 0; assigns the numeric zero into the variable $1.
+
+$bar = $i + 42; takes the value of $i (0) and adds 42, putting the result in $bar.
+
+$foo = $bar; takes the value of $bar (42) and puts it in $foo.
+
+$result = print "$helloworld\n"; calls the print function and puts the result into $result. The print function returns true if print was successful. A Boolean true in Perl  is represented by a numeric 1.  A Boolean false is anything other than a 1, usually a special value called undef, or undefined. Print almost always succeeds, so this put 1 into $result.
+
+$j = ( $i == 0 ); introduces a new operator, the equality test "==".  It test the value of the variable on the left ($i) against the expression on the right (0) and if they are equal, the result is true (or 1).  If they are not equal, the result is undef.
+
+One of the most common Perl mistakes is to use the assignment operator "=" and the equality operator "==".  If we did the wrong thing:
+
+$j = ( $i = 0 );
+
+It would not generate an error, but the result would be very different.  It would have assigned the numeric value zero to $i and then assigned the value of $i (0) to $j.  So instead of $j being at set of $i being true, we would have inadvertently assigned the wrong value to both $i and $j.
+
+
+One of the nice things about Perl is it tries its best to convert different types of data for you on the fly.  When a scalar variable is used in a string expression, the value of that variable is converted into a string and substituted.  So when we did:
+
+print "\$i: \"$i\"\n";
+
+We have a couple new escape characters here: \$ and \".  Both of these are used to insert characters into a string that would otherwise be interpreted as the start of a variable name or a double quote character.
+
+So $i (the second one - since the \$ puts an actual '$' character into the string, the first \$i is actually the string "$i" rather than the variable) contains a numeric zero, which is turned into the string "0" and printed.
+
+If the variable already contains a string, the conversion is easier:
+
+$result = print "$helloworld\n";
+
+The variable $helloworld, which contains the string "Hello, World!", is simply replaced by the string.
+
+
+Input
+
+These programs all do the same exact thing every time, which is kind of pointless.  You don't want to have to write a new program each time you want to do something different, so we need a way to get external information to the program.  A common way to do this in Perl is with command line arguments.  03_echo.pl:
+
+#!/usr/bin/perl
+use strict;
+
+print "@ARGV\n";
+
+Arrays start with '@', so $ARGV is an array.  It's a special variable in Perl - it contains the command line arguments.  So now we can type some additional things on the command line:
+
+$ perl 03_echo.pl these are arguments
+these are arguments
+
+We see what happens to an array in a string context?  It gets converted to a string, in the nicest way possible.
+
+If we did this:
+
+print @ARGV;
+
+we would get the following output:
+
+$ perl -e 'print @ARGV;' these are argumentsthesearearguments
+Besides the lack of a \n at the end, notice the lack of spaces. Perl splits up arguments amongst the elements of the array @ARGV. This is helpful in this case, so we can get the arguments individually. To access the individual elements of an Array, we use square brackets to identify which:
+
+04_echo.pl
+
+#!/usr/bin/perl
+use strict;
+
+if ( $ARGV[0] eq undef ) {
+     print "Please type your name\n";
+} else {
+     print "Hello, @ARGV[0], I see your last name is @ARGV[1]\n";
+}
+
+So now if you type your name as arguments to 04_echo.pl, you get the following:
+
+$ perl 04_echo.pl Theron Trowbridge
+Hello, Theron, I see your last name is Trowbridge
+
+But what happens if you don't type anything?
+
+$ perl 04_echo.pl
+Please type your name
+
+Some changes here.  First, since what we're expecting to be typed is a string, we are using the scalar context of the array @ARGV.  $ARGV[0] means the first item of @ARGV in scalar (string) context.  Putting @ARGV[0] or @ARGV[1] inside a double-quoted string automatically converts the array item to scalar context.  We could have used $ARGV[0] and $ARGV[1] as well.
+
+$ARGV[0] means the first item?  Yeah - in Perl like most programming languages, you start counting at 0 (zero).  I know this can be confusing at first.  Get used to it, and even if you are in a position that you could start counting from 1, start with 0.
+
+We're using "eq" instead of "==" to compare the first argument.  "==" is a numeric equality operator, but "eq" is a string equality operator.  Again, we're expecting strings, so we want to use "eq".  "undef" is the keyword that means undefined.  So if the first argument is empty, the expression is true, so the first code block is executed (print "Please type your name\n";).  If something was typed, the expression will be false, so it executes the else code block (print "Hello, @ARGV[0], I see your last name is @ARGV[1]\n";).
+
+You can check for multiple if values
+
+if ( $a eq "a" ) {
+     ;
+} elsif ( $a eq "b" ) {
+     ;
+} else {
+     ;
+}
+
+You use if for the first test, each of the elsif are evaluated if the preceding tests are false.  Evaluation stops when one of the tests is true.  If none of the tests are true, the else{} block is executed.
+
+You can make this work with the numerical equality operator if you really want to:
+
+if ( @ARGV[0] == "" )
+
+"" is an empty string, which a numerical value of zero, or null, which is the same as not typing anything.  But this is a special case, and you can't use "==" (easily) to test if a particular string was typed, so it's best to get in the habit of using "eq" for strings.
+
+OK, this is all great, but the program says "type your name" so why can't you just type your name?  That's another form of input - user interactivity.
+
+Try 07_echo_name.pl
+
+#!/usr/bin/perl
+use strict;
+
+my ( $name, @full_name );
+
+if ( $ARGV[0] eq undef ) {
+     print "Please type your name\n";
+     chomp( $name = <STDIN> );
+     @full_name = split( /\s+/, $name );
+     print "Hello, @full_name[0], I see your last name is @full_name[1]\n";
+} else {
+     print "Hello, @ARGV[0], I see your last name is @ARGV[1]\n";
+}
+
+Now, you can type your name as arguments to the script or you can respond when it says type your name:
+
+$ perl 07_echo_name.plPlease type your name
+Theron Trowbridge
+Hello, Theron, I see your last name is Trowbridge
+
+<STDIN> is in input operator.  Specifically it's a line input operator that reads from the keyboard.  You can read from a file in a similar manner.  But we'll get to that in a bit.
+
+chomp() is a function that removes extraneous whitespace from a string.  We use it in this case because otherwise the return that you press after typing your name will get included in the input.
+
+We could make this longer if we wanted:
+
+$name = <STDIN>;
+chomp( $name );
+
+But the tendency is to combine lines when possible.  It's easy to get carried away with this and render code unreadable, so be careful.
+
+Notice that we have two very similar lines that differ only in the array items being used?  One repeated line is not that big a deal, but it's easy to have large duplicate blocks of code, which makes your code bigger and less efficient.  And if you make a change to it in one place but not in all, you can have unexpected results.
+
+Any time you have common code you want to be able to call from multiple points in your code, you can create a subroutine.
+
+08_echo_name:
+
+#!/usr/bin/perl
+use strict;
+
+my ( $name, @full_name );
+
+if ( $ARGV[0] eq undef ) {
+     print "Please type your name\n";
+     chomp( $name = <STDIN> );
+     @full_name = split( /\s+/, $name );
+     print( respond( $full_name[0], $full_name[1] ) );
+} else {
+     print( respond( $ARGV[0], $ARGV[1] ) );
+}
+
+sub respond {
+     my $first = @_[0];
+     my $last = @_[1];
+     return( "Hello, $first, I see your last name is $last\n" );
+}
+
+"sub" defines a subroutine.  In this case, "respond" is the name of the subroutine, and is the way you call it from the rest of the program.
+
+Subroutines can receive arguments just like Perl programs, but they use another special array "@_".
+
+Subroutines can return a value, using the "return" function.  The function call becomes an expression that evaluates to the return value.
+
+I made the sub more complicated than it needed to be to illustrate that subs can have their own variables.
+
+The variables $name and @full_name are global - they are available to the entire program.  But $first and $last are local to the subroutine respond.  The portion of the program that a variable is available to is called scope.
+
+Scope can get confusing. It is possible to have two variables with the same name but different scope.
+
+In fact, you can declare a variable inside a { } block of an if statement, and the variable will only exist inside that code block.  This might not be terribly useful, but it is important to keep in mind.
+
+
+Files
+
+
+for/foreach/while
+
+
+Regular Expressions
+
+
+Hashes
+
+
+Packages/object-oriented
+
+
+cpan
+
+
+
+http://perldoc.perl.org/
+
+
+http://programming-motherfucker.com/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
