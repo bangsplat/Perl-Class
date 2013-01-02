@@ -23,20 +23,25 @@ If you wan to do interactive audio, take a look at Pure Data.
 What you need:
 
 Perl
-if you have a Mac or Linux machine, it's already there
-Download ActivePerl community edition for Windows
+If you have a Mac or Linux machine, it's already there
+
+If you use Windows, download ActivePerl (free) community edition
 http://www.activestate.com/activeperl/downloads
 
 Text editor
 Any basic text editor will do, but you really want one that is designed for programming
+
 TextWrangler is free for the Mac
 BBEdit is worth the $50 if you can afford it and do a lot of this stuff
 http://barebones.com/
+
 Notepad++ is free for Windows
 http://notepad-plus-plus.org/
 TextPad is not free, but is only $27 and is a little more robust
 http://www.textpad.com/
 
+
+How these things always start: Hello World
 
 Create a text file named 01_hello_world.pl and type:
 
@@ -50,7 +55,11 @@ hit enter and you'll see:
 
 Hello, World!
 
-What is "\n"?  It's a escaped character, in this case a newline.  It adds a LF or CF/LF depending on what computer is being used.  If you didn't include this, the next command line prompt would come right after the output of the program:
+What is going on here?
+
+print sends the text between the double quotes to the console. The semicolon (;) marks the end of the line.
+
+What about "\n"?  It's a escaped character, in this case a newline.  It is a LF or CF/LF, depending on what computer is being used.  If you didn't include this, the next command line prompt would come right after the output of the program:
 
 $ perl 01_Hello_World.pl
 Hello, World!$ perl 01_Hello_World.pl
@@ -58,7 +67,9 @@ Hello, World!$
 
 This isn't very pretty and can get confusing.  A good rule of thumb is to make sure you always output a \n at the end of your program's output. There are lots of escape characters that do similar things.
 
-Also notice that the line ends with a semicolon.  Statements end with semicolons in Perl (except when they don't).  Perl doesn't care too much about (extra) whitespace but it relies on semicolons to know where your lines of program begin and end.
+In Perl (and most C-like languages), there are general rules, with plenty of exceptions. A good example of this is the semicolon. Statements in Perl end with semicolons, so most lines end with a semicolon, except when they don't.
+
+Perl does not care too much about (extra) whitespace and line breaks because it relies on semicolons to know how the program is divided up.
 
 First rule of Perl is there's always a half dozen ways to do things. And chances are, there is always a shorter way to do things.  In fact, you can do the Hello World program on the command line without a file at all:
 
@@ -77,7 +88,7 @@ We're adding a few things here:
 
 Comments are started with '#'.  Everything on a line after a '#' is ignored, and can be used for explanation or notes
 
-The exception is #!/usr/bin/perl - this tells the computer what program to use to interpret the file.  This is not particularly useful for Windows, which doesn't know anything about shells and whatnot.  But it's good practice to include it anyway.  For LInux or the Mac, it allows you to skip the "perl" part in the command.  But you may have to change the path listed to match where Perl is installed.
+The exception is #!/usr/bin/perl - this tells the computer what program to use to interpret the file.  This is not particularly useful for Windows, which doesn't know anything about shells and whatnot.  But it's good practice to include it anyway.  For Linux or the Mac, it allows you to skip the "perl" part in the command.  But you may have to change the path listed to match where Perl is installed.
 
 $ ./02_hello_world.pl
 Hello, World!
@@ -86,7 +97,9 @@ On Linux and Mac OS, you need to make sure the .pl file is set as an executable,
 
 $ chmod a+x *.pl
 
-Perl has a module mechanism. Modules are invoked with "use".  In this case, "strict" is a pseudo module, but rather a compiler directive, telling Perl to require some things that are good programming practices anyway.  Including "use strict" will keep you from making mistakes and help troubleshoot errors.
+Perl has a module mechanism. Modules are invoked with "use".  In this case, "strict" is a pseudo module, but is being used as a compiler directive, telling Perl to require some things that are good programming practices anyway.  Including "use strict" will keep you from making mistakes and help troubleshoot errors.
+
+Another good module to use is "warnings" which give slightly more informative error messages when things go wrong.
 
 
 What Is Programming?
@@ -101,24 +114,26 @@ Perl, like any programming language, has built-in functions which does combinati
 
 Data is written into and read from variables, which are just locations in the computer's memory.
 
-Other math functions (subtraction, multiplication, division, etc) are just repeated addition.
+Operators do things to bits of memory (variables or output of functions), such as addition. There are other operators that mostly do variations on addition (this is an oversimplification, obviously).
 
-The decision making component is called flow control. You can compare the value of data in memory, or the output of a function, or the result of a math calculation, and then do one of a number of things as a result.
+The decision-making component is called flow control. You can compare the value of data in memory, or the output of a function, or the result of a math calculation, and then do one of a number of things as a result.
 
 Perl is a procedural programming language. Each program starts at the top and proceeds down line by line. You can skip forwards and back with conditional operators, code blocks, and subroutines.
 
+Variables
 
-Another cool thing about Perl is you don't have to worry too much about how your data is represented.  Some languages like C have multiple variable types which store data in different ways.  Perl only really has one type - called a scalar.  There are also arrays, which are a collection of scalars.  There is a special type of array called a hash, which is one of the great features of Perl.
+One convenient thing about Perl is you don't have to worry too much about how your data is represented in memory.  Some languages like C have multiple variable types which store data in different ways.  Perl only really has one type - called a scalar.  There are also arrays, which are a collection of scalars.  There is a special type of array called a hash, which is one of the great features of Perl.
 
 Scalar variables start with a '$'.  Arrays start with an '@'.  Hashes start with a '%'.
+
+Perl will convert between different types of variables for you as needed. This is convenient, but has the downside that Perl may not be as efficient or optimized as a result. Perl isn't necessarily the best choice for resource-constrained applications.
 
 Variables have to be declared before use. You use the "my" keyword to declare variables.  A single "my" can declare multiple variables when enclosed in parenthesis:
 
 my $variable;
 my ( $foo, $bar );
 
-
-You put data into or read data from a variable with the '=' operator:
+You put data into or read data from a variable with the '=' assignment operator:
 
 $variable = "blah";
 $foo = $variable;
