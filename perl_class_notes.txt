@@ -395,8 +395,19 @@ http://programming-motherfucker.com/
 
 
 
-
-
+statements
+variables
+data representation
+expressions
+blocks
+operators
+functions
+subroutines
+regular expressions
+hashes
+input
+output
+files
 
 
 
