@@ -2,9 +2,9 @@ What is Perl?
 
 Wikipedia: Perl is a high-level, general-purpose, interpreted, dynamic programming language.
 
-What?  Perl is a kick ass scripting language.  Meaning programs don't need to be compiled before running.  Perl programs are compiled at runtime, making it a great cross-platform language.
+What?  Perl is a kick ass scripting language.  Meaning programs don't need to be compiled before running.  Perl programs are compiled when you run them ("at runtime"), making it a great cross-platform language.
 
-It has very powerful regular expression implementation, which makes it great for processing files.
+It has very powerful regular expression implementation (think: search and replace), which makes it great for processing files.  In fact, this is what what Perl was created to do: parse log files.
 
 It doesn't have strong graphics capabilities (there is a module called PerlTK to create GUIs in Perl) so it is typically run from the command line.
 
@@ -16,11 +16,40 @@ Perl is not well-suited for every task.
 
 If you want to do have interactive graphics, take a look at Processing.
 
-If you wan to do interactive audio, take a look at Pure Data.
+If you want to do interactive audio, take a look at Pure Data.
 
+If you want to program embedded devices, take a look at Arduino or Python (on Raspberry Pi).
+
+
+Why Perl?
+
+Something happened in 1972 - The C Programming Language.  Dennis Ritchie was co-developing the Unix operating system and was unsatisfied with the programming languages available.  So he designed a new programming language, called C.  He and Brian W. Kernighan wrote a book to describe the language, and it is one of the best computer programming books ever written.  It is well-written, clear, and concise (the first edition is only about 120 pages).
+
+C is a simple yet powerful and flexible language.  Most high-level languages that have been introduced since have been largely based on C.  They are dialects of the same language; if you understand C, you can more or less read (and with a little work, write) the others.
+
+So why not start with C?
+
+C has some quirks that make doing simple things more complicated than they need to be (particularly when it comes to string manipulation), and make it easy for you to shoot yourself in the foot.
+
+C is a compiled language, which requires you to install and use a compiler, and slows down the process of writing and running your program.
+
+While C can be very portable, platform-specific implementation details can make it a challenge share your program with others.
+
+
+Perl is very C-like, so you can move to other C-like languages easily.  There is no compilation step.  And your programs can easily run on other computers.
+
+Perl has a reputation for being intimidating, confusing, and unreadable.  This reputation is not entirely unwarranted (they have contests to see who can create the shortest, least readable Perl program, after all).  But it doesn't have to be that way.
+
+<find some examples>
+
+
+Let's get started!
 
 
 What you need:
+
+A computer
+(duh)
 
 Perl
 If you have a Mac or Linux machine, it's already there
@@ -109,6 +138,12 @@ Programming is telling a computer what to do.  Computers can only do a few thing
 1) read/write data into memory
 2) add two numbers together
 3) make decisions based on the result of these two things
+
+There are a few other things, but they may be considered variations on the above
+
+2(b) multiply a number by -1
+4) compare two numbers 
+5) binary operations
 
 Perl, like any programming language, has built-in functions which does combinations of the above things to accomplish specific things.  "print" is one of these - it output a string.
 
