@@ -33,10 +33,10 @@ C has some quirks that make doing simple things more complicated than they need 
 
 C is a compiled language, which requires you to install and use a compiler, and slows down the process of writing and running your program.
 
-While C can be very portable, platform-specific implementation details can make it a challenge share your program with others.
+While C can be portable, platform-specific implementation details can make it a challenge share your program with others.
 
 
-Perl is very C-like, so you can move to other C-like languages easily.  There is no compilation step.  And your programs can easily run on other computers.
+Perl is very C-like, so you can move to other C-like languages easily.  There is no (separate) compilation step.  And your programs can easily run on other computers.
 
 Perl has a reputation for being intimidating, confusing, and unreadable.  This reputation is not entirely unwarranted (they have contests to see who can create the shortest, least readable Perl program, after all).  But it doesn't have to be that way.
 
@@ -94,7 +94,9 @@ $ perl 01_Hello_World.pl
 Hello, World!$ perl 01_Hello_World.pl
 Hello, World!$
 
-This isn't very pretty and can get confusing.  A good rule of thumb is to make sure you always output a \n at the end of your program's output. There are lots of escape characters that do similar things.
+This isn't very pretty and can get confusing.  A good rule of thumb is to make sure you always output a \n at the end of your program's output.
+
+There are lots of escape characters that do similar things.
 
 In Perl (and most C-like languages), there are general rules, with plenty of exceptions. A good example of this is the semicolon. Statements in Perl end with semicolons, so most lines end with a semicolon, except when they don't.
 
@@ -131,29 +133,36 @@ Perl has a module mechanism. Modules are invoked with "use".  In this case, "str
 Another good module to use is "warnings" which give slightly more informative error messages when things go wrong.
 
 
+Now that you're a programmer, we should probably ask the question, "what is programming?"
+
 What Is Programming?
 
 Programming is telling a computer what to do.  Computers can only do a few things:
 
 1) read/write data into memory
 2) add two numbers together
-3) make decisions based on the result of these two things
+3) compare two numbers
+4) make decisions based on the result of these two things
 
-There are a few other things, but they may be considered variations on the above
-
-2(b) multiply a number by -1
-4) compare two numbers 
-5) binary operations
+This is a necessary oversimplification, but it is basically true.
 
 Perl, like any programming language, has built-in functions which does combinations of the above things to accomplish specific things.  "print" is one of these - it output a string.
 
 Data is written into and read from variables, which are just locations in the computer's memory.
 
-Operators do things to bits of memory (variables or output of functions), such as addition. There are other operators that mostly do variations on addition (this is an oversimplification, obviously).
+Operators do things to bits of memory (variables or output of functions), such as addition. There are other operators that mostly do variations on addition (again, this is a bit of an oversimplification).
 
 The decision-making component is called flow control. You can compare the value of data in memory, or the output of a function, or the result of a math calculation, and then do one of a number of things as a result.
 
 Perl is a procedural programming language. Each program starts at the top and proceeds down line by line. You can skip forwards and back with conditional operators, code blocks, and subroutines.
+
+
+
+Data Representation
+
+
+
+
 
 Variables
 
