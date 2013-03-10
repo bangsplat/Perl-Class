@@ -94,7 +94,7 @@ $ perl 01_Hello_World.pl
 Hello, World!$ perl 01_Hello_World.pl
 Hello, World!$
 
-This isn't very pretty and can get confusing.  A good rule of thumb is to make sure you always output a \n at the end of your program's output.
+This isn't very pretty and can get confusing.  It's a good practice to make sure you always output a \n at the end of your program's output.
 
 There are lots of escape characters that do similar things.
 
@@ -119,7 +119,12 @@ We're adding a few things here:
 
 Comments are started with '#'.  Everything on a line after a '#' is ignored, and can be used for explanation or notes
 
-The exception is #!/usr/bin/perl - this tells the computer what program to use to interpret the file.  This is not particularly useful for Windows, which doesn't know anything about shells and whatnot.  But it's good practice to include it anyway.  For Linux or the Mac, it allows you to skip the "perl" part in the command.  But you may have to change the path listed to match where Perl is installed.
+The exception is #!/usr/bin/perl - this tells the computer what program to use to interpret the file.  This is not particularly useful for Windows, which doesn't know anything about shells and whatnot.  But it's good practice to include it anyway.  For Linux or the Mac, it allows you to skip the "perl" part in the command.  But you may have to change the path listed to match where Perl is installed.  On Linux and Mac computers, you can figure out the right path with the which command:
+
+$ which perl
+/usr/bin/perl
+
+So if you set the interpreter path correctly, you can run the script like this:
 
 $ ./02_hello_world.pl
 Hello, World!
@@ -133,7 +138,7 @@ Perl has a module mechanism. Modules are invoked with "use".  In this case, "str
 Another good module to use is "warnings" which give slightly more informative error messages when things go wrong.
 
 
-Now that you're a programmer, we should probably ask the question, "what is programming?"
+Now that you're a programmer, we should probably answer the question, "what is programming?"
 
 What Is Programming?
 
@@ -142,13 +147,13 @@ Programming is telling a computer what to do.  Computers can only do a few thing
 1) read/write data into memory
 2) add two numbers together
 3) compare two numbers
-4) make decisions based on the result of these two things
+4) make decisions based on the result of these things
 
 This is a necessary oversimplification, but it is basically true.
 
 Perl, like any programming language, has built-in functions which does combinations of the above things to accomplish specific things.  "print" is one of these - it output a string.
 
-Data is written into and read from variables, which are just locations in the computer's memory.
+Data is written into and read from variables, which are just locations in the computer's memory.  A variable name is an address for the location in memory.
 
 Operators do things to bits of memory (variables or output of functions), such as addition. There are other operators that mostly do variations on addition (again, this is a bit of an oversimplification).
 
@@ -160,7 +165,11 @@ Perl is a procedural programming language. Each program starts at the top and pr
 
 Data Representation
 
+A computer has to store and transmit information as electricity.  
 
+Modern computers store and transmit information as electricity.    1's and 0's.  
+
+<make picture of square wave>
 
 
 
