@@ -181,7 +181,7 @@ Scalar variables start with a '$'.  Arrays start with an '@'.  Hashes start with
 
 Perl will convert between different types of variables for you as needed. This is convenient, but has the downside that Perl may not be as efficient or optimized as a result. Perl isn't necessarily the best choice for resource-constrained applications.
 
-Variables have to be declared before use. You use the "my" keyword to declare variables.  A single "my" can declare multiple variables when enclosed in parenthesis:
+You have to tell Perl about your variables, or "declare" them.  You use the "my" keyword to declare variables.  A single "my" can declare multiple variables when enclosed in parenthesis:
 
 my $variable;
 my ( $foo, $bar );
