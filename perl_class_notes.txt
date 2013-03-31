@@ -2,9 +2,9 @@ What is Perl?
 
 Wikipedia: Perl is a high-level, general-purpose, interpreted, dynamic programming language.
 
-What?  Perl is a kick ass scripting language.  Meaning programs don't need to be compiled before running.  Perl programs are compiled when you run them ("at runtime"), making it a great cross-platform language.
+What?  Perl is a kick-ass scripting language.  Meaning programs don't need to be compiled before running.  Perl programs are compiled when you run them ("at runtime"), making it a great cross-platform language.
 
-It has very powerful regular expression implementation (think: search and replace), which makes it great for processing files.  In fact, this is what what Perl was created to do: parse log files.
+It has very powerful regular expression implementation (think: search and replace on steroids), which makes it great for processing files.  In fact, this is what what Perl was created to do: parse log files.
 
 It doesn't have strong graphics capabilities (there is a module called PerlTK to create GUIs in Perl) so it is typically run from the command line.
 
@@ -19,6 +19,8 @@ If you want to do have interactive graphics, take a look at Processing.
 If you want to do interactive audio, take a look at Pure Data.
 
 If you want to program embedded devices, take a look at Arduino or Python (on Raspberry Pi).
+
+But no matter which of these languages you end up using, Perl makes a good place to learn.
 
 
 Why Perl?
@@ -361,7 +363,8 @@ if ( $ARGV[0] eq undef ) {
 
 Now, you can type your name as arguments to the script or you can respond when it says type your name:
 
-$ perl 07_echo_name.plPlease type your name
+$ perl 07_echo_name.pl
+Please type your name
 Theron Trowbridge
 Hello, Theron, I see your last name is Trowbridge
 
@@ -374,7 +377,7 @@ We could make this longer if we wanted:
 $name = <STDIN>;
 chomp( $name );
 
-But the tendency is to combine lines when possible.  It's easy to get carried away with this and render code unreadable, so be careful.
+But the tendency in Perl is to combine lines when possible.  It's easy to get carried away with this and render code unreadable, which gives Perl it's reputation for being indeciperable.  So try not to get carried away.
 
 Notice that we have two very similar lines that differ only in the array items being used?  One repeated line is not that big a deal, but it's easy to have large duplicate blocks of code, which makes your code bigger and less efficient.  And if you make a change to it in one place but not in all, you can have unexpected results.
 
