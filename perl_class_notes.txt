@@ -42,7 +42,12 @@ Perl is very C-like, so you can move to other C-like languages easily.  There is
 
 Perl has a reputation for being intimidating, confusing, and unreadable.  This reputation is not entirely unwarranted (they have contests to see who can create the shortest, least readable Perl program, after all).  But it doesn't have to be that way.
 
-<find some examples>
+$i=4;$|=@f=map{("!"x$i++)."K$_^\x{0e}"}
+"BQI!\\","BQI\\","BQI","BQ","B","";push
+@f,reverse@f[1..5];@f=map{join"",undef,
+map{chr(ord()-1)}split""}@f;{;$f=shift@
+f;print$f;push@f,$f;select undef,undef,
+undef,.25;redo;last;exit;print or die;}
 
 
 Let's get started!

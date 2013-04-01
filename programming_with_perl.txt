@@ -1,0 +1,47 @@
+An Absolute Beginner's Guide To Programming
+With Perl
+
+So you want to learn to program?  Good.  Let's do that.
+
+First things first.
+
+Programming is telling a computer what to do.  We do that by writing programs.  We have to speak a language that the computer understands.  We're going to use Perl.
+
+Why Perl?
+
+Something happened in 1972 - The C Programming Language.  Dennis Ritchie was co-developing the Unix operating system and was unsatisfied with the programming languages available.  So he designed a new programming language, called C.  He and Brian W. Kernighan wrote a book to describe the language, and it is one of the best computer programming books ever written.  It is well-written, clear, and concise (the first edition is only about 120 pages).
+
+C is a simple yet powerful and flexible language.  Most high-level languages that have been introduced since have been largely based on C.  They are dialects of the same language; if you understand C, you can more or less read (and with a little work, write) the others.
+
+So why not start with C?
+
+C has some quirks that make doing simple things more complicated than they need to be (particularly when it comes to string manipulation), and make it easy for you to shoot yourself in the foot.
+
+C is a compiled language, which requires you to install and use a compiler, and slows down the process of writing and running your program.
+
+While C can be portable, platform-specific implementation details can make it a challenge share your program with others.
+
+Perl is very C-like, so you can move to other C-like languages easily.  There is no (separate) compilation step.  And your programs can easily run on other computers.
+
+Perl has a reputation for being intimidating, confusing, and unreadable.  This reputation is not entirely unwarranted (they have contests to see who can create the shortest, least readable Perl program, after all).  But it doesn't have to be that way.
+
+$i=4;$|=@f=map{("!"x$i++)."K$_^\x{0e}"}
+"BQI!\\","BQI\\","BQI","BQ","B","";push
+@f,reverse@f[1..5];@f=map{join"",undef,
+map{chr(ord()-1)}split""}@f;{;$f=shift@
+f;print$f;push@f,$f;select undef,undef,
+undef,.25;redo;last;exit;print or die;}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
