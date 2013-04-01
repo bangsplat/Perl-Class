@@ -5,7 +5,36 @@ So you want to learn to program?  Good.  Let's do that.
 
 First things first.
 
+
+What is programming?
+
 Programming is telling a computer what to do.  We do that by writing programs.  We have to speak a language that the computer understands.  We're going to use Perl.
+
+
+What is Perl?
+
+Wikipedia: Perl is a high-level, general-purpose, interpreted, dynamic programming language.
+
+What?  Perl is a kick-ass scripting language.  Meaning programs don't need to be compiled before running.  Perl programs are compiled when you run them ("at runtime") for the computer they're running on, making it a great cross-platform language.
+
+It has very powerful regular expression implementation (think: search and replace on steroids), which makes it great for processing files.  In fact, this is what what Perl was created to do: parse log files.
+
+It doesn't have strong graphics capabilities (there is a module called PerlTK to create GUIs in Perl) so it is typically run from the command line.
+
+
+Why do I like Perl?  It's very powerful, yet easy and quick to write and debug, and can be run just about anywhere.  I am usually wanting to analyze, modify, and/or generate files - Perl is ideal for this.
+
+
+Perl is not well-suited for every task.
+
+If you want to do have interactive graphics, take a look at Processing.
+
+If you want to do interactive audio, take a look at Pure Data.
+
+If you want to program embedded devices, take a look at Arduino or Python (on Raspberry Pi).
+
+But no matter which of these languages you end up using, Perl makes a good place to learn.
+
 
 Why Perl?
 
@@ -33,6 +62,9 @@ f;print$f;push@f,$f;select undef,undef,
 undef,.25;redo;last;exit;print or die;}
 
 
+Procedural Programming
+
+Perl is a a high-level
 
 
 
