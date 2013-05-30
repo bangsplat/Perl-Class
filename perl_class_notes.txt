@@ -1,3 +1,16 @@
+An Absolute Beginner's Guide To Programming
+With Perl
+
+So you want to learn to program?  Good.  Let's do that.
+
+First things first.
+
+
+What is programming?
+
+Programming is telling a computer what to do.  We do that by writing programs.  We have to speak a language that the computer understands.  We're going to use Perl.
+
+
 What is Perl?
 
 Wikipedia: Perl is a high-level, general-purpose, interpreted, dynamic programming language.
@@ -91,7 +104,11 @@ hit enter and you'll see:
 
 Hello, World!
 
-What is going on here?
+Congratulations!  You're a programmer.
+
+
+OK, it might help if you understood what's going on here.
+
 
 print sends the text between the double quotes to the console. The semicolon (;) marks the end of the line.
 
@@ -126,7 +143,7 @@ We're adding a few things here:
 
 Comments are started with '#'.  Everything on a line after a '#' is ignored, and can be used for explanation or notes
 
-The exception is #!/usr/bin/perl - this tells the computer what program to use to interpret the file.  This is not particularly useful for Windows, which doesn't know anything about shells and whatnot.  But it's good practice to include it anyway.  For Linux or the Mac, it allows you to skip the "perl" part in the command.  But you may have to change the path listed to match where Perl is installed.  On Linux and Mac computers, you can figure out the right path with the which command:
+#!/usr/bin/perl is a special comment that tells the shell what program to use to interpret the file.  Perl doesn't care about this, but Mac and Linux computers do.  Windows, not so much.  But it's good practice to include it anyway.  For Linux or the Mac, it allows you to skip the "perl" part in the command.  But you may have to change the path listed to match where Perl is installed.  On Linux and Mac computers, you can figure out the right path with the which command:
 
 $ which perl
 /usr/bin/perl
@@ -145,16 +162,44 @@ Perl has a module mechanism. Modules are invoked with "use".  In this case, "str
 Another good module to use is "warnings" which give slightly more informative error messages when things go wrong.
 
 
-Now that you're a programmer, we should probably answer the question, "what is programming?"
+<need a segue>
 
-What Is Programming?
 
-Programming is telling a computer what to do.  Computers can only do a few things:
+What Is A Computer?
+
+In order for us to be able to efficiently tell the computer what to do (program it), we need to know what a computer is.
+
+A computer is a general-purpose tool.  It does what you tell it to.  (Within reason.)
+
+<picture of computer>
+
+This is what the inside of a computer looks like.  Well, not really, but this shows the essentials.
+
+You need a few things for a computer:
+
+Processor (CPU)
+Memory
+Clock
+Input/Output
+
+
+The processor is the brains of the computer. It's basically a calculator that follows instructions.
+
+It can only do a few things:
 
 1) read/write data into memory
 2) add two numbers together
 3) compare two numbers
 4) make decisions based on the result of these things
+
+
+
+
+
+
+
+
+
 
 This is a necessary oversimplification, but it is basically true.
 
@@ -167,6 +212,9 @@ Operators do things to bits of memory (variables or output of functions), such a
 The decision-making component is called flow control. You can compare the value of data in memory, or the output of a function, or the result of a math calculation, and then do one of a number of things as a result.
 
 Perl is a procedural programming language. Each program starts at the top and proceeds down line by line. You can skip forwards and back with conditional operators, code blocks, and subroutines.
+
+
+
 
 
 
