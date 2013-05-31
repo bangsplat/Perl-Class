@@ -179,8 +179,8 @@ You need a few things for a computer:
 
 Processor (CPU)
 Memory
-Clock
 Input/Output
+Clock
 
 
 The processor is the brains of the computer. It's basically a calculator that follows instructions.
@@ -192,20 +192,161 @@ It can only do a few things:
 3) compare two numbers
 4) make decisions based on the result of these things
 
-
-
-
-
-
-
-
-
-
 This is a necessary oversimplification, but it is basically true.
 
-Perl, like any programming language, has built-in functions which does combinations of the above things to accomplish specific things.  "print" is one of these - it output a string.
+Perl, like any programming language, has built-in functions which does combinations of the above capabilities to accomplish specific things.  "print" is one of these - it outputs a string to the terminal.
 
-Data is written into and read from variables, which are just locations in the computer's memory.  A variable name is an address for the location in memory.
+
+Memory is a place where things can be (temporarily) stored, including programs and data.  Traditionally, memory is the vernacular for "RAM" (Random Access Memory) and is volatile - meaning it only persists while the computer is on.  Traditionally, "storage" is what we would call long-term memory - non-volatile storage such as hard drives, floppy disks, and data tapes.  Today, with solid state disks, the difference between memory and storage is being blurred, and more and more computers are using a single store of non-volatile solid state devices for both memory and storage.
+
+Memory and storage may be physically converging, but for reasons of tradition, they are handled differently via controllers that manage the two types of devices.
+
+
+Input/Output is how we get data into and out of the computer. These take multiple forms - keyboard, monitor, files, printer, camera, microphone, speaker, etc.  We will focus on what we call "Standard I/O" (STDIO) - the keyboard and terminal - and files.
+
+
+Clock - if the processor is the brains of the computer, the clock is its heart.  The clock is the synchronizer which controls the movement of data.
+
+
+Data Representation
+
+We don't care about data.  What we care about is information.  But we need to store that information as data.
+
+Information Theory (The Short Form)
+
+Information is a stream of symbols.  We humans use many symbols
+
+A, B, C, 1, 2, 3, ., !, *, (, ), -, &c.
+
+We use data to represent, store, and transmit symbols.  Information theory is the study of efficient use of data.
+
+Computers only use electricity for data.  Digital computers don't have as many symbols as humans do.  The only have two:
+
+0
+
+and
+
+1
+
+They could have more, and in the future they probably will.
+
+But the way we build comptuers now, they use a voltage (usually 5 volts) to represent 1 and another (usually 0 volts) to represent 0.
+
+(Kind of.)
+
+(Mostly.)
+
+Because there are two symbols, we call this binary (or base 2).  Each symbol is a Binary digIT - or "bit."
+
+10101001 = 8 bits = 1 byte = 2 nibbles
+
+Bits by themselves don't mean anything but we assign values to them or combinations of them.
+
+Humans usually have ten fingers so we count in decimal - or base 10.  Decimal has ten symbols:
+
+0 1 2 3 4 5 6 7 8 9
+
+(Note that I put 0 first.)
+
+How To Count
+
+(Yeah, I know you learned this in kindergarden, but you probably learned wrong.)
+
+Start at 0.  (Pretend there are infinite leading zeros - 0 = 00000000.)
+Increment the right-most digit by one. (0, 1, 2, 3, 4, 5, 6, 7, 8, 9.)
+When you run out of symbols, reset to 0 and increment the digit to the left ("carry the one").
+Repeat.
+
+00 01 02 03 04 05 06 07 08 09 10 11 12 &c.
+
+Binary is no different.  We just run out of symbols more frequently.
+
+0000 0001 0010 0011 0100 0101 0110 0111 1000 &c.
+
+We can convert between binary and decimal easily enough.
+
+0 = 0
+1 = 1
+10 = 2
+11 = 3
+100 = 4
+
+They don't line up very well.  But say we use 2^4 = 16 symbols - hexadecimal.  We need a few more (a total of 16) symbols:
+
+0 1 2 3 4 5 6 7 8 9 A B C D E F
+
+1 hex digit is exactly 4 bits, or one half a byte.
+
+0000 = 0 = 0
+0001 = 1 = 1
+0010 = 2 = 2
+0011 = 3 = 3
+0100 = 4 = 4
+0101 = 5 = 5
+0110 = 6 = 6
+0111 = 7 = 7
+1000 = 8 = 8
+1001 = 9 = 9
+1010 = 10 = A
+1011 = 11 = B
+1100 = 12 = C
+1101 = 13 = D
+1110 = 14 = E
+1111 = 15 = F
+
+Because numbers in different bases can look the same, sometimes we add prefixes to identify the base.
+
+Decimal (base 10) 0d
+Binary (base 2) 0b
+Hexadecimal (base 16) 0x
+
+1 byte = 2^8 = 256 values (0x00 .. 0xFF).
+
+Think of memory as a row of houses.  Each house stores 1 byte.  Each house has it's own address.
+
+Why 8 bits?
+
+It's convenient.  It can store enough values to store every letter, number, punctuation, etc. for any western alphabet (Asian languages require more).
+
+The mapping between byte values and letters/numbers/etc. is called ASCII.  It's entirely arbitrary.  But then, this is true of all data representation (though there may be logic between the choices).
+
+Say we need more than 256 values to represent your data?  No problem - just use more bytes.  Use two (adjacent) houses.
+
+2 houses = 2 bytes = 16 bits = ~32 thousand values = 1 CD sample (or 1 MP3 sample if you don't know what a CD is).
+
+4 houses = 4 bytes = 32 bits = ~4 billion values.
+
+We can represent all positive numbers or both positive and negative numbers this way.  16 bits can be 0..65536 or -16728..16727.  But all are whole numbers.  We call these integers.
+
+If we need fractional numbers, we call that floating point
+
+3.14159
+2.5
+1.0
+1000/1001
+
+Floating point numbers are stored in a complex format that represent the number as an integer and where to put the decimal point.
+
+6.02x10^23
+
+Floating point numbers are typically 32 bits, but there is a double float that is 64 bits.
+
+We can represent anything in binary but we mostly need to worry about a few data types:
+
+characters (single byte values)
+string (a string of characters)
+integers
+floating point numbers
+
+Data is stored in memory.  To keep track of where it is in memory, we give the address of the house where it is stored (or the first house if it uses more than one byte) a name.  Think of it as an address book that lists the name of the variable, it's memory address, and what type of variable it is.
+
+
+
+
+
+
+
+
 
 Operators do things to bits of memory (variables or output of functions), such as addition. There are other operators that mostly do variations on addition (again, this is a bit of an oversimplification).
 
@@ -215,16 +356,6 @@ Perl is a procedural programming language. Each program starts at the top and pr
 
 
 
-
-
-
-Data Representation
-
-A computer has to store and transmit information as electricity.  
-
-Modern computers store and transmit information as electricity.    1's and 0's.  
-
-<make picture of square wave>
 
 
 
