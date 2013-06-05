@@ -418,15 +418,21 @@ Just about anything can happen to the right of the assignment operator (or, inde
 
 
 
+<create a variables.pl that shows off creation, assignment, references, etc>
+<create a functions.pl that shows off calling, defining, etc>
 
 
 
 
-functions
+Also, about "print" - it's what we call a function.  Functions are like built-in programs.  
+
+
+
+
+
+
 
 scope
-
-operators
 
 
 
