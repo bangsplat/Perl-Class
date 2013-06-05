@@ -94,7 +94,7 @@ How these things always start: Hello World
 
 Create a text file named 01_hello_world.pl and type:
 
-print "Hello, World!\n";
+	print "Hello, World!\n";
 
 save the file and from the command line and type:
 
@@ -134,10 +134,10 @@ But most useful programs are too complex to do inline.  So we'll do it the long 
 
 02_hello_world.pl:
 
-#!/usr/bin/perl
-use strict;          # enforce good programming practices
+	#!/usr/bin/perl
+	use strict;          # enforce good programming practices
 
-print "Hello, World!\n";
+	print "Hello, World!\n";
 
 We're adding a few things here:
 
@@ -340,7 +340,93 @@ floating point numbers
 
 Data is stored in memory.  To keep track of where it is in memory, we give the address of the house where it is stored (or the first house if it uses more than one byte) a name.  Think of it as an address book that lists the name of the variable, it's memory address, and what type of variable it is.
 
+(Files are a little different - think of them as one big variable, with a file name instead of an address.  Each byte in the file has its own address inside the file.)
 
+
+In most programming languages, you have to say what data type a variable is before using it.  This is called "declaring" the variable.  It allocates memory for the variable, setting aside a chunk of memory at a free memory address.
+
+Perl simplifies things for you a bit.  You can actually get away without declaring your variables at all, if you don't use the strict module.  But it's good habit, so we're going to pretend we have to.
+
+What you don't have to do is tell Perl what kind of data you're going to keep in the variable.  Perl is very flexible about that and can deal with all kinds of data, even converting between types as needed.  This is convenient, but you give up some efficiency and speed for this convenience.  So if you find yourself wishing your program were faster, you may want to move to a different language.
+
+Perl only really has one data type, called a scalar.  Scalar variables are identified by a dollar sign at their beginning (like $var).  Scalars are declared with the my keyword:
+
+my $var;
+
+"var" is the name of the variable.  Variable names in Perl are case sensitive, so "var" is not the same as "Var".  Choosing variable names is important - you want them to indicate what the variable is for, but you want to keep it short enough to be manageable.
+
+You can also assign a value to a variable at the time of declaration:
+
+my $var = 1;
+my $lastname = "Smith";
+
+(OK, we've introduced a new thing here - the "=" is an operator.  We'll get back to that in a minute.)
+
+There are two other types of variables, but they're just groups of scalars.
+
+Arrays are a series of scalars.  They are identified by a "@" at their beginning (like @addresses).  An array can contain any number of scalars (well, almost any number), and you identify each scalar by number (like @addresses[0] or @addresses[1]).
+
+Just as with counting, you start at zero.  The first item is item number zero.  Which takes a little getting used to.
+
+Hashes are pairs of linked arrays, so you can think of them as an array of arrays.  Hashes are identified by a "%" at their beginning (like %price).  Hashes are basically a rudimentary database.  They are awesome, but they take some learning.
+
+We'll get back to arrays and hashes in a bit.
+
+03_hello_world.pl
+
+	#!/usr/bin/perl
+
+	use strict;		# enforce good programming practices
+
+	my $hello_string;
+
+	$hello_string = "Hello, World!\n";
+
+	print "$hello_string";
+
+So here, we're declaring a scalar variable named $hello_string, then we're putting the data "Hello, World!\n" into the variable (writing to memory), then we're using the variable in the print command instead of the string.
+
+The text inbetween the double quotes is called a string.  (A string is essentially an array of bytes.)
+
+When Perl sees a scalar variable inside a string, it substitutes the variable name with the contents of the variable.  (Reading memory.)  So,
+
+	print "$hello_string";
+
+is functionally the same as 
+
+	print "Hello, World!\n";
+
+The value of a variable can change (hence the name, variable).  So you can do this:
+
+	my $hello_string;
+
+	$hello_string = "derp";
+	$hello_string = "Hello, World!\n";
+
+	print "$hello_string";
+
+After the first assignment, $hello_string contains "derp".  The second replaces the string "derp" with "Hello, World!\n".
+
+The "=" is the assignment operator.  It sets the thing to the left of the operator (our variable in this case) to the value of the thing to the right of the operator (our string in this case).
+
+Just about anything can happen to the right of the assignment operator (or, indeed, most operators).  Including another variable:
+
+	my $a = "Hello, World!\n";
+	my $hello_string = $a;
+
+
+
+
+
+
+
+
+
+functions
+
+scope
+
+operators
 
 
 
