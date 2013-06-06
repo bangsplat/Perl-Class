@@ -414,28 +414,314 @@ Just about anything can happen to the right of the assignment operator (or, inde
 	my $a = "Hello, World!\n";
 	my $hello_string = $a;
 
+04_variables.pl
+
+	my $my_string;
+	my $another_string = "blah blah blah";
+	my ( $a, $b );
+
+	$my_string = "Hello, World!\n";
+	$another_string = $my_string;
+	$a = $b = 1;
+
+	print "\$my_string: $my_string\n";
+	print "\$another_string: $another_string\n";
+	print "\$a: $a\n";
+	print "\$b: $b\n";
+
+When you run this, you see:
+
+	$my_string: Hello, World!
+
+	$another_string: Hello, World!
+
+	$a: 1
+	$b: 1
+
+Why the blank lines after the Hello, World! strings?
+
+
+Declaring variables
+
+You declare a variable using the "my" keyword.  You can declare more than one variable with each "my" by putting them in parenthesis.  You can declare a variable and set it's value by using the assignment operator.
+
+
+Setting variables
+
+You set the value of a variable with the assignment operator ("=").
+
+You can use a string, a number, or another variable to set the value of a variable.
+
+Because assignment operators work from right to left, you can assign a variable and use the value of that variable to set another variable.
+
+You should always set the value of a variable before you use it, otherwise it's value may be unpredictable.
+
+
+Variables and strings
+
+Text in between double quote marks are a string.  If you put a scalar variable in a string, Perl substitutes the variable name for the contents of the variable.
+
+But what if we want to put the name of the variable in a string?  You have to "escape" the "$" character by putting a backslash in front of it ("\$").  This makes perl actually put in a dollar sign character in the string instead of using it for a variable name.  This also works for other special characters like double quotes and such.
+
+
+Functions
+
+Functions are like little programs that you run inside a program.  They have inputs (parameters) and outputs (return values).  Their output can be assigned to a variable or used as a parameter for another function.
+
+Function names, like variable names, are case-sensitive.
+
+Perl has many built-in functions.  Print is technically a function, for example.
+
+You can also define your own functions with the sub keyword.  (sub is short for subroutine, which is what they are called in BASIC.)
+
+In most programming languages, functions are called by using their name followed by parenthesis, with any parameters inside the parenthesis, separated by commas.
+
+	function( a, b, c );
+
+You can do this in Perl, too.  Or not.  Perl doesn't really care.  Perl is like the Honey Badger of programming languages.
+
+It comes down to programming style.  I personally use parenthesis a lot - I think they help keep the code readable.  But you don't have to.
+
+05_functions.pl
+
+	my $my_string = "blah blah blah";
+	my $string_length = length( $my_string );
+
+	print( $my_string . "\n" );		# classic function form
+	print $my_string . "\n";		# look ma, no parenthesis!
+
+	print "\"$my_string\" is " . length( $my_string ) . " characters long\n";
+	print "\"$my_string\" is $string_length characters long\n";
+
+	my_function( $my_string );
+
+	my $result = how_long( $my_string );
+	print "\"$my_string\" is $result characters long\n";
+	print "\"$my_string\" is " . how_long( $my_string ) . " characters long\n";
+
+	$result = my_function();
+	print "my_function returned $result\n";
+
+	sub my_function {
+		my $param = @_[0];
+		print "You said \"$param\"\n";
+	}
+
+	sub how_long {
+		my $param = $_[0];
+		return length( $param );
+	}
+
+Output of the program:
+
+	blah blah blah
+	blah blah blah
+	"blah blah blah" is 14 characters long
+	"blah blah blah" is 14 characters long
+	You said "blah blah blah"
+	"blah blah blah" is 14 characters long
+	"blah blah blah" is 14 characters long
+	You said ""
+	my_function returned 1
+
+OK, lots of new things here.
+
+"." is an operavtor.  It concatenates strings together.  So you can add a newline character to the end of another string.
+
+We're also using the escaped double quote to put a double quote character inside a string.
+
+length() is a built-in function that returns an integer - the length of a string.  You can assign it's output to a variable or you can use it as the parameter for another function such as print().
+
+There are two defined functions here: my_function() and how_long().  They use the sub keyword and have a code block surrounded by curly braces to define the function.  my_function() does not return a value.  Well, as we see it technically does.  Any function without an explicit return value simply returns "1" indicating success.
+
+how_long() explicitly returns the length of a string passed to it.  This is kind of pointless since we have the built-in length() function, but we could be counting the number of spaces or uppercase letters of something else instead.
+
+A function's return value is set using the return() function.
+
+Also notice this:
+
+	my $param = @_[0];
+
+This is how we get the parameter passed to the function.  @_ is an array.  @_[0] is the first item in the array (remember, start with zero).  @_ is a special built-in variable you don't need to declare because it's built-in to Perl.  Perl takes all of the parameters passed to a function and puts them into the array @_.  The first parameter is in the first item of the array, the second in the second, etc.
+
+Notice in one sub I use @_[0] and the other $_[0].  They both work.  The array is called @_, but when we precede an array with the scalar variable type, Perl converts the array value to a scalar.  However, since we're putting @_[0] into a scalar, Perl figures we want it converted and does it anyhow.  Technically, $_[0] is more correct.  But Perl is generally pretty smart about what you want to do.
+
+If you find yourself doing the same thing over and over again in your program, consider making it a function.
+
+
+Scope
+
+Notice that I declare $param in both subs.  Normally with use strict on, declaring a variable twice would cause an error.  Why does this work?
+
+Variables have a "scope" which defines where that variable is valid and can be used.  When you declare a variable inside a code block, the variable is created at the point where it is declared, and it is destroyed at the end of the code block.  The variable is said to have local scope.
+
+Variables declared outside of any code blocks are said to have global scope and are available everywhere in the program.
+
+You can declare a variable inside a code block with the same name as a global variable.  It essentially replaces (while in scope) the global variable.
+
+Scope can be confusing.  And re-using variable names can increase the confusion, so keep it to a minimum.  There are a few variables I will use in multiple scopes, such as function parameters, like above.  But it's dangerous and the results can be unpredictable.  So just don't.
+
+
+Operators
+
+We've seen a couple operators so far.  But "=" and "." seem to do different things.  But they're both operators.  And they have similar properties.
+
+Operators do things to bits of memory (variables or output of functions), such as addition. There are other operators that mostly do variations on addition (again, this is a bit of an oversimplification).
+
+06_operators.pl
+
+	my ( $a, $b, $c );
+	my $my_string = "foo";
+
+	$a = 2;
+	$b = 5;
+	$c = 2 + 2;
+	print "result is $c\n";
+	$c = $a + $b;
+	print "result is $c\n";
+	$c = $a * $b;
+	print "result is $c\n";
+	$c += $a;
+	print "result is $c\n";
+	$c *= $b;
+	print "result is $c\n";
+	$c++;
+
+	if ( $c >= 60 ) {
+		print "\$c is greater than or equal to 60\n";
+	} else {
+		print "\$c is less than 60\n";
+	}
+
+	print "\$c is $c\n";
+	if ( $c-- == 60 ) { print "\$c is exactly 60\n"; }
+	else { print "\$c is NOT 60\n"; }
+
+	print "\$c is $c\n";
+	if ( --$c == 60 ) { print "\$c is exactly 60\n"; }
+	else { print "\$c is NOT 60\n"; }
+
+	if ( $c != 0 ) { print "\$c is not zero\n"; }
+	print "\$c is $c\n";
+
+	print "$c" . " " x 5 . "\n";
+	print "$c " x 5 . "\n";
+
+	if ( $my_string = "foo" ) { print "\$my_string = \"foo\"\n"; }
+	if ( $my_string = "bar" ) { print "\$my_string = \"bar\"\n"; }
+	if ( $my_string == "foo" ) { print "\$my_string == \"foo\"\n"; }
+	if ( $my_string == "bar" ) { print "\$my_string == \"bar\"\n"; }
+	if ( $my_string eq "foo" ) { print "\$my_string eq \"foo\"\n"; }
+	if ( $my_string eq "bar" ) { print "\$my_string eq \"bar\"\n"; }
+	if ( $my_string ne "foo" ) { print "\$my_string ne \"foo\"\n"; }
+	if ( $my_string ne "bar" ) { print "\$my_string ne \"bar\"\n"; }
+	print "$my_string\n";
+
+Output:
+
+	result is 4
+	result is 7
+	result is 10
+	result is 12
+	result is 60
+	$c is greater than or equal to 60
+	$c is 61
+	$c is NOT 60
+	$c is 60
+	$c is NOT 60
+	$c is not zero
+	$c is 59
+	59     
+	59 59 59 59 59 
+	$my_string = "foo"
+	$my_string = "bar"
+	$my_string == "foo"
+	$my_string == "bar"
+	$my_string eq "bar"
+	$my_string ne "foo"
+	bar
+
+OK.  Lots of operators.  Perl has lots of operators
+
+= is the assignment operator - makes the item on the left equal to the item on the right.
++ is addition - adds the left and right together
+- / * other math operators
++= adds the right to the left and puts the result in the left, unlike + which just evaluates to the result and needs to be used with an operator or as a parameter.
+-= *= /= same thing but for other math functions.
+++ increment operator - adds 1.
+-- decrement operator - subtracts 1.
+== equality operator - checks for equality of the left and right and evaluates to 1 if they match and 0 if they do not.
+> greater than comparison operator - evaluates to 1 if left is greater than right.
+< less than comaprison operator - evaluates to 1 if left is less than right.
+>= greater than or equal to comparison operator - evaluates to 1 if left is greater than or equal to the right, 0 otherwise.
+<= less than or equal to comaprison operator.
+!= inequality operator - evaluates to 1 if left and right are not equal, 0 otherwise.
+x repetition operator repeats the left by the number on the right
+. concatenation operator - evaluates to the left and right concatenated together (does not modify the left)
+.= concatenation operator - modifies the left by concatenating the right.
+eq string equality operator - compares left and right as strings, evaluates to 1 if they are equal, 0 otherwise.
+ne string inequality operator - opposite of eq.
+lt string less than operator - compares left and right and evaluates to 1 if left is stringwise less then right.
+gt string greater than operator - compares left and right and evaluates to 1 if left is stringwise greater then right.
+
+We are also doing conditional branching with if statements.
+
+if(){}else{} executes the code block if the expression in the parenthesis evaluates to 1.  Otherwise it executes the else code block.
+
+Most of these operators are pretty straightforward.  But some get confusing.
+
++ vs +=
+
+
+= vs ==
+
+A very common mistake is trying to use = to test for equality.
+
+	my $a = 1;
+	if ( $a = 2 ) { print "$a\n"; }
+
+Here $a starts out as 1, but in the second line where we want to test to see if it is 2, we are actually assigning it to be 2.
+
+The assignment operator evaluates to 1 because the assignment was successful, so it prints the value of $a, and it's different from what we first assigned to it.
+
+Instead we want to use == to test the value of $a:
+
+	my $a = 1;
+	if ( $a == 2 ) { print "$a\n"; }
+
+In this case, $a is not equal to 2 so it does not print the value.
+
+
+== vs eq
+
+Perl tries to convert your variables for you, but sometimes it doesn't work out right.
+
+Short story - use ==, !=, >, <, >=, <= to compare numbers and use eq, ne, lt, gt, lte, gte to comapre strings.  That way Perl knows what you're talking about.
+
+If you use the wrong one (say you use == to compare strings) the result might not be what you expected.
+
+
+++ and --
+
+Increment and decrement operators can come before or after a variable name.  Where they are placed determines when they increment and decrement.  When before, the increment/decrement happens before the expression is evaluated.  When after, it happens after the expression is evaluated.  This is very important when it comes to comaprisons.
+
+	my $a = 1;
+	if ( $a++ == 1 ) { print "hooray!\n";}
+	if ( $a++ == 1 ) { print "hooray!\n";}
+
+The first if statement tests true because $a is 1 to start with.  But after the if() test, $a is incremented to be 2.  The second tests false because $a is no longer 1.  After the second if() test, $a is incremented to 3.
+
+	my $a = 1;
+	if ( ++$a == 1 ) { print "hooray!\n";}
+	if ( ++$a == 1 ) { print "hooray!\n";}
+
+In this case, $a is incremented to 2 before the equality test in the first if() statement, so it tests false.  $a is 3 for the second if() so it tests false as well.
 
 
 
 
-<create a variables.pl that shows off creation, assignment, references, etc>
-<create a functions.pl that shows off calling, defining, etc>
 
-
-
-
-Also, about "print" - it's what we call a function.  Functions are like built-in programs.  
-
-
-
-
-
-
-
-scope
-
-
-
+precedence
 
 
 
