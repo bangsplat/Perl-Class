@@ -671,6 +671,7 @@ if(){}else{} executes the code block if the expression in the parenthesis evalua
 Most of these operators are pretty straightforward.  But some get confusing.
 
 + vs +=
+- vs -=
 
 
 = vs ==
@@ -718,19 +719,60 @@ The first if statement tests true because $a is 1 to start with.  But after the 
 In this case, $a is incremented to 2 before the equality test in the first if() statement, so it tests false.  $a is 3 for the second if() so it tests false as well.
 
 
+Precedence and Associvity
+
+What order are operators performed in?  There is an order in which operators are performed.  For math operators, it's generally the same as you were taught in Algebra.  * and / are done before + and -.
+
+And if you have more than one operator with the same precedence in a row, they are mostly left associative (that is, they are done in left-to-right order).  Mostly.  There are some that are right associative.
+
+There is a complete list of operator precedence and associativity at http://perldoc.perl.org/perlop.html.
+
+If you can't keep track and you need things to be done in a particular order, you can control it by adding parenthesis around them.  And parenthesis can be nested (that is you can (or is it may?) parenthesis inside parenthesis).  Operators in the inner-most parenthesis are performed first.
+
+07_precedence.pl
+
+	my $result;
+	$result = 2 + 4 * 5;	#	== 22
+	$result = (2 + 4) * 5;	#	== 30
+	$result = 8 - 4 - 2;	#	== 2
+	$result = 8 - (4 - 2);	#	== 6
+
+
+Flow Control
+
+Perl is a procedural programming language.  Each program starts at the top and proceeds down line by line (or rather, statement by statement).  But if it always does exactly the same thing, it isn't that useful and you wouldn't need to run it more than once.  So we have what we call flow control to change the order in which we do things.
+
+Flow control is managed with two things: conditional operators and subroutines.
+
+We've seen examples of each of these now.  Subroutines are the functions defined with the sub keyword.
+
+The if() statement was an example of a conditional operator.  But we used a simple version.  It can get complicated.  Real complicated.
+
+
+tests
+if() {} elsif() {} else {};
+
+
+loops
+
+for
+while
+foreach
 
 
 
-precedence
+input
 
 
 
 
-Operators do things to bits of memory (variables or output of functions), such as addition. There are other operators that mostly do variations on addition (again, this is a bit of an oversimplification).
+files
 
-The decision-making component is called flow control. You can compare the value of data in memory, or the output of a function, or the result of a math calculation, and then do one of a number of things as a result.
 
-Perl is a procedural programming language. Each program starts at the top and proceeds down line by line. You can skip forwards and back with conditional operators, code blocks, and subroutines.
+
+
+regular expressions
+
 
 
 
