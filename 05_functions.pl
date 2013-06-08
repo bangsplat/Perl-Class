@@ -1,6 +1,8 @@
 #!/usr/bin/perl
 
-use strict;		# enforce good programming practices
+# enforce good programming practices
+use strict;
+use warnings;
 
 my $my_string = "blah blah blah";
 my $string_length = length( $my_string );

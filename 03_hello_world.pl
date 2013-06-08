@@ -1,9 +1,11 @@
 #!/usr/bin/perl
 
-use strict;		# enforce good programming practices
+# enforce good programming practices
+use strict;
+use warnings;
 
 my $hello_string;
 
 $hello_string = "Hello, World!\n";
 
-print "$hello_string";
+print( "$hello_string" );

@@ -1,6 +1,8 @@
 #!/usr/bin/perl
 
-use strict;		# enforce good programming practices
+# enforce good programming practices
+use strict;
+use warnings;
 
 my ( $a, $b, $c );
 my $my_string = "foo";

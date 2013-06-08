@@ -1,5 +1,6 @@
-An Absolute Beginner's Guide To Programming
-With Perl
+Hello, Perl
+An Absolute Beginner's Guide To Programming With Perl
+
 
 So you want to learn to program?  Good.  Let's do that.
 
@@ -13,7 +14,7 @@ Programming is telling a computer what to do.  We do that by writing programs.  
 
 What is Perl?
 
-Wikipedia: Perl is a high-level, general-purpose, interpreted, dynamic programming language.
+Wikipedia: Perl [purl] is a high-level, general-purpose, interpreted, dynamic programming language.
 
 What?  Perl is a kick-ass scripting language.  Meaning programs don't need to be compiled before running.  Perl programs are compiled when you run them ("at runtime"), making it a great cross-platform language.
 
@@ -29,11 +30,11 @@ Perl is not well-suited for every task.
 
 If you want to do have interactive graphics, take a look at Processing.
 
-If you want to do interactive audio, take a look at Pure Data.
-
 If you want to program embedded devices, take a look at Arduino or Python (on Raspberry Pi).
 
-But no matter which of these languages you end up using, Perl makes a good place to learn.
+If you want to do interactive audio, take a look at Pure Data.
+
+But no matter which of these languages you end up using, Perl is a good place to learn.
 
 
 Why Perl?
@@ -89,16 +90,37 @@ http://notepad-plus-plus.org/
 TextPad is not free, but is only $27 and is a little more robust
 http://www.textpad.com/
 
+You can use command line text editors such as vi or emacs, but GUI text editors are easier.
+
+Terminal Shell
+This is a program that lets you send commands to your computer.
+
+Mac: /Applications/Utilities/Terminal
+
+Linux: depends on your distro
+
+Windows: go to start menu and in application box, type cmd.exe
+
+Basic shell commands:
+
+ls (dir) - get directory listing
+cd - change directory
+pwd - show current working directory
+
+
+Hello, World
 
 How these things always start: Hello World
 
 Create a text file named 01_hello_world.pl and type:
 
-	print "Hello, World!\n";
+	print( "Hello, World!\n" );
 
-save the file and from the command line and type:
+(The programs for this class are on my github: https://github.com/bangsplat/Perl-Class - but you should type at least this one in by scratch.)
 
-$ perl 01_Hello_World.pl
+Save the file and from the command line and type:
+
+	perl 01_Hello_World.pl
 
 hit enter and you'll see:
 
@@ -110,9 +132,11 @@ Congratulations!  You're a programmer.
 OK, it might help if you understood what's going on here.
 
 
-print sends the text between the double quotes to the console. The semicolon (;) marks the end of the line.
+A Perl program is a series of statements, separated by semicolons (;).  The statements are executed in order starting at the top of the file.
 
-What about "\n"?  It's a escaped character, in this case a newline.  It is a LF or CF/LF, depending on what computer is being used.  If you didn't include this, the next command line prompt would come right after the output of the program:
+This program only has one statement.  It uses the print function to display a string - the text between the double quotes - "Hello, World\n" to the terminal.
+
+What is the "\n"?  It's an escape character.  Escape characters are used to insert special characters into a string.  In this case, the escape character is a newline - it's the same as if pressing the return key on the keyboard.  If you didn't include this, the next command line prompt woudl come right after the output of the program:
 
 $ perl 01_Hello_World.pl
 Hello, World!$ perl 01_Hello_World.pl
@@ -120,11 +144,7 @@ Hello, World!$
 
 This isn't very pretty and can get confusing.  It's a good practice to make sure you always output a \n at the end of your program's output.
 
-There are lots of escape characters that do similar things.
-
-In Perl (and most C-like languages), there are general rules, with plenty of exceptions. A good example of this is the semicolon. Statements in Perl end with semicolons, so most lines end with a semicolon, except when they don't.
-
-Perl does not care too much about (extra) whitespace and line breaks because it relies on semicolons to know how the program is divided up.
+There are lots of escape characters that do similar things.  We'll see others in a bit.
 
 First rule of Perl is there's always a half dozen ways to do things. And chances are, there is always a shorter way to do things.  In fact, you can do the Hello World program on the command line without a file at all:
 
@@ -135,15 +155,18 @@ But most useful programs are too complex to do inline.  So we'll do it the long 
 02_hello_world.pl:
 
 	#!/usr/bin/perl
-	use strict;          # enforce good programming practices
+
+	# enforce good programming practices
+	use strict;
+	use warnings;
 
 	print "Hello, World!\n";
 
 We're adding a few things here:
 
-Comments are started with '#'.  Everything on a line after a '#' is ignored, and can be used for explanation or notes
+The first line is a comment.  Comments begin with '#'.  Everything from the '#' to the end of the line is ignored by Perl.  Comments can be used for documentation or notes.
 
-#!/usr/bin/perl is a special comment that tells the shell what program to use to interpret the file.  Perl doesn't care about this, but Mac and Linux computers do.  Windows, not so much.  But it's good practice to include it anyway.  For Linux or the Mac, it allows you to skip the "perl" part in the command.  But you may have to change the path listed to match where Perl is installed.  On Linux and Mac computers, you can figure out the right path with the which command:
+#!/usr/bin/perl is a special comment that tells the shell what program to use to execute the script.  Perl doesn't care about this, but Mac and Linux computers do.  Windows, not so much.  But it's good practice to include it anyway.  For Linux or the Mac, it allows you to skip the "perl" part in the command.  But you may have to change the path listed to match where Perl is installed.  On Linux and Mac computers, you can figure out the right path with the which command:
 
 $ which perl
 /usr/bin/perl
@@ -157,17 +180,15 @@ On Linux and Mac OS, you need to make sure the .pl file is set as an executable,
 
 $ chmod a+x *.pl
 
-Perl has a module mechanism. Modules are invoked with "use".  In this case, "strict" is a pseudo module, but is being used as a compiler directive, telling Perl to require some things that are good programming practices anyway.  Including "use strict" will keep you from making mistakes and help troubleshoot errors.
+Perl has a module mechanism. Modules are invoked with "use".  In this case, "strict" and "warnings" are pseudo modules.  They warn you when you do things that might be mistakes and enforcing some optional rules that are good programming practices anyway.  After you learn what you're doing, you can omit them, but I recommend you use them to keep from making mistakes and help troubleshoot errors.
 
-Another good module to use is "warnings" which give slightly more informative error messages when things go wrong.
-
-
-<need a segue>
 
 
 What Is A Computer?
 
-In order for us to be able to efficiently tell the computer what to do (program it), we need to know what a computer is.
+You "know" what a computer is.  You're using one now.  You probably own several.  Your cell phone is a computer.  Your car has one.  Your television, cable box, etc., are all essentially computers.  But they don't all look or behave the way you probably think a computer should.
+
+So, what is a computer?  Knowing the answer to this will help us to understand how to program the computer.
 
 A computer is a general-purpose tool.  It does what you tell it to.  (Within reason.)
 
@@ -188,9 +209,8 @@ The processor is the brains of the computer. It's basically a calculator that fo
 It can only do a few things:
 
 1) read/write data into memory
-2) add two numbers together
-3) compare two numbers
-4) make decisions based on the result of these things
+2) perform operations (such as adding or comparing) on two numbers
+3) make decisions based on the result of these things
 
 This is a necessary oversimplification, but it is basically true.
 
@@ -210,7 +230,7 @@ Clock - if the processor is the brains of the computer, the clock is its heart. 
 
 Data Representation
 
-We don't care about data.  What we care about is information.  But we need to store that information as data.
+We don't really care about data.  What we care about is information.  But we need to store that information as data.
 
 Information Theory (The Short Form)
 
@@ -248,13 +268,18 @@ Humans usually have ten fingers so we count in decimal - or base 10.  Decimal ha
 
 (Note that I put 0 first.)
 
+
 How To Count
 
 (Yeah, I know you learned this in kindergarden, but you probably learned wrong.)
 
-Start at 0.  (Pretend there are infinite leading zeros - 0 = 00000000.)
+Start at 0.
+
+Understand that adding a zero to the left of a number doesn't change it's value.  0 is the same as 00000000.  So pretend there are infinite leading zeros.
+
 Increment the right-most digit by one. (0, 1, 2, 3, 4, 5, 6, 7, 8, 9.)
 When you run out of symbols, reset to 0 and increment the digit to the left ("carry the one").
+
 Repeat.
 
 00 01 02 03 04 05 06 07 08 09 10 11 12 &c.
@@ -275,7 +300,7 @@ They don't line up very well.  But say we use 2^4 = 16 symbols - hexadecimal.  W
 
 0 1 2 3 4 5 6 7 8 9 A B C D E F
 
-1 hex digit is exactly 4 bits, or one half a byte.
+1 hex digit is exactly 4 bits, or one half a byte (amusingly called a "nibble" back in the day).
 
 0000 = 0 = 0
 0001 = 1 = 1
@@ -308,6 +333,8 @@ Why 8 bits?
 
 It's convenient.  It can store enough values to store every letter, number, punctuation, etc. for any western alphabet (Asian languages require more).
 
+http://asciitable.com
+
 The mapping between byte values and letters/numbers/etc. is called ASCII.  It's entirely arbitrary.  But then, this is true of all data representation (though there may be logic between the choices).
 
 Say we need more than 256 values to represent your data?  No problem - just use more bytes.  Use two (adjacent) houses.
@@ -316,7 +343,7 @@ Say we need more than 256 values to represent your data?  No problem - just use 
 
 4 houses = 4 bytes = 32 bits = ~4 billion values.
 
-We can represent all positive numbers or both positive and negative numbers this way.  16 bits can be 0..65536 or -16728..16727.  But all are whole numbers.  We call these integers.
+We can represent all positive numbers or both positive and negative numbers this way.  16 bits can be 0..65536 or -16728..16727.  (Zero is treated as a positive number.)  But all are whole numbers.  We call these integers.
 
 If we need fractional numbers, we call that floating point
 
@@ -327,14 +354,14 @@ If we need fractional numbers, we call that floating point
 
 Floating point numbers are stored in a complex format that represent the number as an integer and where to put the decimal point.
 
-6.02x10^23
+6.02x10^23 (you might remember this from high school chemistry)
 
 Floating point numbers are typically 32 bits, but there is a double float that is 64 bits.
 
 We can represent anything in binary but we mostly need to worry about a few data types:
 
 characters (single byte values)
-string (a string of characters)
+string (a sequence of characters)
 integers
 floating point numbers
 
@@ -360,7 +387,7 @@ You can also assign a value to a variable at the time of declaration:
 my $var = 1;
 my $lastname = "Smith";
 
-(OK, we've introduced a new thing here - the "=" is an operator.  We'll get back to that in a minute.)
+(OK, we've introduced a new thing here - the "=" is the assignment operator.  We'll get back to that in a minute.)
 
 There are two other types of variables, but they're just groups of scalars.
 
@@ -370,25 +397,19 @@ Just as with counting, you start at zero.  The first item is item number zero.  
 
 Hashes are pairs of linked arrays, so you can think of them as an array of arrays.  Hashes are identified by a "%" at their beginning (like %price).  Hashes are basically a rudimentary database.  They are awesome, but they take some learning.
 
-We'll get back to arrays and hashes in a bit.
+We'll get back to arrays and hashes in a while.
+
+From here on out, we're going to leave out the header part of the program to save space.  The full program will be in the github repository, of course.
 
 03_hello_world.pl
 
-	#!/usr/bin/perl
-
-	use strict;		# enforce good programming practices
-
 	my $hello_string;
-
 	$hello_string = "Hello, World!\n";
+	print( "$hello_string" );
 
-	print "$hello_string";
+So here, we're declaring a scalar variable named $hello_string, then we're putting the data "Hello, World!\n" into the variable (writing to memory), then we're using the variable in the string we feed to the print function.
 
-So here, we're declaring a scalar variable named $hello_string, then we're putting the data "Hello, World!\n" into the variable (writing to memory), then we're using the variable in the print command instead of the string.
-
-The text inbetween the double quotes is called a string.  (A string is essentially an array of bytes.)
-
-When Perl sees a scalar variable inside a string, it substitutes the variable name with the contents of the variable.  (Reading memory.)  So,
+When Perl sees a scalar variable name inside double quotes, it "interpolates" the variable - meaning it replaces the variable name with the data stored in the variable.  So,
 
 	print "$hello_string";
 
@@ -416,13 +437,15 @@ Just about anything can happen to the right of the assignment operator (or, inde
 
 04_variables.pl
 
-	my $my_string;
-	my $another_string = "blah blah blah";
-	my ( $a, $b );
+	my $my_string;	# declare a variable named $my_string
+	my $another_string = "blah blah blah";	# declare a variable and set it's value
+	my ( $a, $b );	# declare two variables at once
 
-	$my_string = "Hello, World!\n";
-	$another_string = $my_string;
-	$a = $b = 1;
+	$my_string = "Hello, World!\n";	# set value of $my_string
+
+	$another_string = $my_string;	# set value of $another_string to be same as $my_string
+
+	$a = $b = 1;					# set both $a and $b to 1;
 
 	print "\$my_string: $my_string\n";
 	print "\$another_string: $another_string\n";
@@ -438,7 +461,7 @@ When you run this, you see:
 	$a: 1
 	$b: 1
 
-Why the blank lines after the Hello, World! strings?
+Pop quiz: Why the blank lines after the Hello, World! strings?
 
 
 Declaring variables
@@ -454,7 +477,7 @@ You can use a string, a number, or another variable to set the value of a variab
 
 Because assignment operators work from right to left, you can assign a variable and use the value of that variable to set another variable.
 
-You should always set the value of a variable before you use it, otherwise it's value may be unpredictable.
+You should always set the value of a variable before you use it.  The warnings module will warn you if you do not.  In theory, every unassigned variable has a special value called undef, but you may find things don't work predictably if you don't assign values before using variables.
 
 
 Variables and strings
@@ -470,7 +493,7 @@ Functions are like little programs that you run inside a program.  They have inp
 
 Function names, like variable names, are case-sensitive.
 
-Perl has many built-in functions.  Print is technically a function, for example.
+Perl has many built-in functions.  Print is a function, for example.
 
 You can also define your own functions with the sub keyword.  (sub is short for subroutine, which is what they are called in BASIC.)
 
@@ -526,7 +549,7 @@ Output of the program:
 
 OK, lots of new things here.
 
-"." is an operavtor.  It concatenates strings together.  So you can add a newline character to the end of another string.
+"." is an operavtor.  It concatenates two strings together.  So you can add a newline character to the end of another string.
 
 We're also using the escaped double quote to put a double quote character inside a string.
 
@@ -553,7 +576,7 @@ Scope
 
 Notice that I declare $param in both subs.  Normally with use strict on, declaring a variable twice would cause an error.  Why does this work?
 
-Variables have a "scope" which defines where that variable is valid and can be used.  When you declare a variable inside a code block, the variable is created at the point where it is declared, and it is destroyed at the end of the code block.  The variable is said to have local scope.
+Variables have a "scope" which defines where that variable is valid and can be used.  When you declare a variable inside a code block (a chunk of code between curly braces), the variable is created at the point where it is declared, and it is destroyed at the end of the code block.  The variable is said to have local scope.
 
 Variables declared outside of any code blocks are said to have global scope and are available everywhere in the program.
 
@@ -641,7 +664,7 @@ Output:
 	$my_string ne "foo"
 	bar
 
-OK.  Lots of operators.  Perl has lots of operators
+OK.  Lots of operators.  Perl has lots of operators.  It's not important that you learn all of them right away, but here are some examples:
 
 = is the assignment operator - makes the item on the left equal to the item on the right.
 + is addition - adds the left and right together
@@ -672,6 +695,10 @@ Most of these operators are pretty straightforward.  But some get confusing.
 
 + vs +=
 - vs -=
+
++, -, *, and / are standard arithmetic operators.  Like '.' they operate on the thing on the left and the thing on the right, and return the result.  But they leave both things (left and right) unchanged.
+
++=, -=, *=, and /= work the same, but they modify the thing on the left to contain the result.  Think of $a += $b to mean "add $b to $a".  Whereas $a + $b is "what is $a plus $b?".
 
 
 = vs ==
@@ -747,6 +774,10 @@ Flow control is managed with two things: conditional operators and subroutines.
 We've seen examples of each of these now.  Subroutines are the functions defined with the sub keyword.
 
 The if() statement was an example of a conditional operator.  But we used a simple version.  It can get complicated.  Real complicated.
+
+
+#####
+
 
 
 tests
