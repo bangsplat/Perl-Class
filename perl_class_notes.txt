@@ -773,306 +773,308 @@ Flow control is managed with two things: conditional operators and subroutines.
 
 We've seen examples of each of these now.  Subroutines are the functions defined with the sub keyword.
 
-The if() statement was an example of a conditional operator.  But we used a simple version.  It can get complicated.  Real complicated.
+
+Conditional Branching
+
+The if() statement was an example of a conditional operator.  But we used a simple version.  It can get a little more complicated:
+
+	if ( $a	== 0 ) {
+		... # do something here if $a is exactly 0
+	} elsif ( $a > 0 ) {
+		... # do something else if $a is positive
+	} else {
+		... # do something else if $a is negative
+	}
 
 
-#####
+Loops
+
+Sometimes we need to do things more than once, maybe slightly differently each time.  Perl has several ways of doing this.
+
+For loops are taken straight from C.
+
+	for ( my $i = 0; $i < 10; $i++ ) {
+		print( "$i\n" );
+	}
+
+There are three statements that make up the for loop:
+
+1) An initialization (in this case, we declare a variable $i and initialize it to zero.
+2) A test to continue with the loop (if test is true)
+3) A statement to execute after each loop
+
+We typically use $i as shorthand for index.  If you declare a variable in the for statement, it has scope for the code block which is run for each iteration of the loop.
+
+The code block is executed if the test is true.  If you want to loop 10 times, the test would be that $i is less then 10.
+
+After each loop, $i is incremented by 1.  After the 10th loop, the value of $i is 10.
+
+
+There are other loop types as well:
+
+	while( test ) { ... }
+
+Performs the code block if the test expression is true.
+
+	until( test ) { ... }
+
+Performs the code block if the test expression is false.
+
+	foreach( @array ) { ... }
+
+Performs the code block for each item in array @array
+	
+
+
+08_ascii_table.pl
+
+Here's a more practical example that uses looping and arrays and illustrates the data representation of text characters.
+
+	my $output_string = "";
+	my $num_cols = 8;		# should be a power of 2 (i.e., 2, 4, or 8)
+	my $num_length = 3;		# should be at least 3
+
+	# create the table contents
+	for ( my $i = 0; $i < 256; $i++ ) {
+		$output_string .= pad_with_leading_zeros( $i, $num_length ) . " ";
+		if ( $i > 32 ) { $output_string .= chr( $i ); }
+		$output_string .= "\n";
+	}
+
+	print( $output_string = format_into_columns( $output_string, $num_cols ) );
+
+	# pad_with_leading_zeros( number, total_length)
+	# add leading zeros to a number to make it the requested length
+	sub pad_with_leading_zeros {
+		my $number = shift;
+		my $length = shift;
+		my $return_string = "";
+		for ( my $i = 0; $i < ( $length - length( $number ) ); $i++ ) {
+			$return_string .= "0";
+		}
+		$return_string .= "$number";
+		return( $return_string );
+	}
+
+	# format_into_columns( table, num_columns)
+	# Take the 256 table entires and make columns out of it
+	# Takes two parameters - the table and the number of desired columns
+	sub format_into_columns {
+		my @input_list = split( '\n', $_[0] );
+		my $num_columns = $_[1];
+		my $return_string = "";
+	
+		for ( my $row = 0; $row < ( 256 / $num_columns ); $row++ ) {
+			for ( my $col = 0; $col < $num_columns; $col++ ) {
+				$return_string .= "$input_list[(($row)+($col*(256/$num_columns)))]\t";
+			}
+			$return_string .= "\n";
+		}
+		return( $return_string );
+	}
+
+This outputs:
+
+	000 	032 	064 @	096 `	128 ?	160 ?	192 ?	224 ?	
+	001 	033 !	065 A	097 a	129 ?	161 ?	193 ?	225 ?	
+	002 	034 "	066 B	098 b	130 ?	162 ?	194 ?	226 ?	
+	003 	035 #	067 C	099 c	131 ?	163 ?	195 ?	227 ?	
+	004 	036 $	068 D	100 d	132 ?	164 ?	196 ?	228 ?	
+	005 	037 %	069 E	101 e	133 ?	165 ?	197 ?	229 ?	
+	006 	038 &	070 F	102 f	134 ?	166 ?	198 ?	230 ?	
+	007 	039 '	071 G	103 g	135 ?	167 ?	199 ?	231 ?	
+	008 	040 (	072 H	104 h	136 ?	168 ?	200 ?	232 ?	
+	009 	041 )	073 I	105 i	137 ?	169 ?	201 ?	233 ?	
+	010 	042 *	074 J	106 j	138 ?	170 ?	202 ?	234 ?	
+	011 	043 +	075 K	107 k	139 ?	171 ?	203 ?	235 ?	
+	012 	044 ,	076 L	108 l	140 ?	172 ?	204 ?	236 ?	
+	013 	045 -	077 M	109 m	141 ?	173 ?	205 ?	237 ?	
+	014 	046 .	078 N	110 n	142 ?	174 ?	206 ?	238 ?	
+	015 	047 /	079 O	111 o	143 ?	175 ?	207 ?	239 ?	
+	016 	048 0	080 P	112 p	144 ?	176 ?	208 ?	240 ?	
+	017 	049 1	081 Q	113 q	145 ?	177 ?	209 ?	241 ?	
+	018 	050 2	082 R	114 r	146 ?	178 ?	210 ?	242 ?	
+	019 	051 3	083 S	115 s	147 ?	179 ?	211 ?	243 ?	
+	020 	052 4	084 T	116 t	148 ?	180 ?	212 ?	244 ?	
+	021 	053 5	085 U	117 u	149 ?	181 ?	213 ?	245 ?	
+	022 	054 6	086 V	118 v	150 ?	182 ?	214 ?	246 ?	
+	023 	055 7	087 W	119 w	151 ?	183 ?	215 ?	247 ?	
+	024 	056 8	088 X	120 x	152 ?	184 ?	216 ?	248 ?	
+	025 	057 9	089 Y	121 y	153 ?	185 ?	217 ?	249 ?	
+	026 	058 :	090 Z	122 z	154 ?	186 ?	218 ?	250 ?	
+	027 	059 ;	091 [	123 {	155 ?	187 ?	219 ?	251 ?	
+	028 	060 <	092 \	124 |	156 ?	188 ?	220 ?	252 ?	
+	029 	061 =	093 ]	125 }	157 ?	189 ?	221 ?	253 ?	
+	030 	062 >	094 ^	126 ~	158 ?	190 ?	222 ?	254 ?	
+	031 	063 ?	095 _	127 	159 ?	191 ?	223 ?	255 ?	
+
+Let's look at the specifics.
+
+Since we are formatting text output, we have a couple things to control that formatting.  We could have just put these as values in the code, but it's generally better to make them variables at the top of the program and document them with comments to make them controls that can be tweaked.
+
+	my $num_cols = 8;		# should be a power of 2 (i.e., 2, 4, or 8)
+	my $num_length = 3;		# should be at least 3
+
+We use a for loop to count from 0 to 255 with a for loop.  We are using the chr() function to convert the number 0..255 into it's ASCII equivalent character.  (There is a function that does the opposite - ord().)  We are using a sub function to add leading zeros to the number so that everything lines up neatly.
+
+	for ( my $i = 0; $i < 256; $i++ ) {
+		$output_string .= pad_with_leading_zeros( $i, $num_length ) . " ";
+		if ( $i > 32 ) { $output_string .= chr( $i ); }
+		$output_string .= "\n";
+	}
+
+The sub function takes two parameters - the number to pad and the total length we want it to be.
+
+Remember before we used the special @_ array to get the parameters passed to the function?  Remember rule one?  There are multiple ways of getting the values from that array.  In this case, we're using the shift() function.
+
+Shift returns the first item from an array, removing it from the array.  We could have said shift( @_ ).  But when we don't specify an array, it defaults to @_.  Which is convenient shorthand, but if you don't know Perl, it's not particularly obvious.
+
+We are using another for loop to step through the leading zeros, and adding them to the output string.  Then we add the actual number.  We cause the sub function to return the string we've built by using the return() function.
+
+	sub pad_with_leading_zeros {
+		my $number = shift;
+		my $length = shift;
+		my $return_string = "";
+		for ( my $i = 0; $i < ( $length - length( $number ) ); $i++ ) {
+			$return_string .= "0";
+		}
+		$return_string .= "$number";
+		return( $return_string );
+	}
+
+The other sub function takes the list, which is formatted one number and it's corresponding character per line, and breaks it into multiple columns.
+
+We are using two for loops - one nested inside the other.  The inner loop executes once for each instance of the outer loop.  We are building the table one row at a time, so with our default 8 column format, we need to step by 32s: 0, 32, 64, 96, 128, 160, 192, 224.
+
+To be able to access the needed item in the list, we put it into an array using the split() function.  split() is awesome.  You give it a scalar with delimited data and tell it what the delimiter is.  split() breaks the scalar apart between the delimiters and puts them into the array.  The delimiter gets left out.  The delimiter doesn't have to be a single character - it can be a complicated expression.
+
+In this case, the delimiter is the newline character separating each line.  So we end up with an array of 256 elements, one for each item in the table.
+
+	sub format_into_columns {
+		my @input_list = split( '\n', $_[0] );
+		my $num_columns = $_[1];
+		my $return_string = "";
+	
+		for ( my $row = 0; $row < ( 256 / $num_columns ); $row++ ) {
+			for ( my $col = 0; $col < $num_columns; $col++ ) {
+				$return_string .= "$input_list[(($row)+($col*(256/$num_columns)))]\t";
+			}
+			$return_string .= "\n";
+		}
+		return( $return_string );
+	}
+
+The opposite of split() is join().
 
 
 
-tests
-if() {} elsif() {} else {};
+Input
+
+Just like functions have input parameters, our program does too.  Like sub function parameters, the program's parameters are put in a special array, @ARGV.  The simplest use of the command line parameters is echoing them back to the output.
+
+09_echo.pl
+
+	print "@ARGV\n";
+
+If you don't specify any parameters, it doesn't seem to do anything:
+
+	$ perl 09_echo.pl
+
+	$
+
+But if you add something, that is the result:
+
+	$ perl 09_echo.pl foo
+	foo
+	$
+
+You can parse multiple parameters by grabbing the different elements of @ARGV.
+
+The other type of user input is taking input from the keyboard while the program is running.  They keyboard input is called STDIN, or standard input (the output to the console is STDOUT).
+
+In Perl, STDIN and STDOUT are handled as a special kind of file.  We'll see more about how files work in a bit.
+
+If we want to read from the keyboard, we use the <STDIN> file handle.  <> is a shortcut, as the default file handle is STDIN.
+
+10_echo_name.pl
+
+	my ( $name, @full_name );
+
+	if ( $ARGV[0] eq undef ) {
+		print "Please type your first and last name\n";
+		chomp( $name = <STDIN> );
+		@full_name = split( /\s+/, $name );
+		print( respond( $full_name[0], $full_name[1] ) );
+	} else {
+		print( respond( $ARGV[0], $ARGV[1] ) );
+	}
+
+	sub respond {
+		my $first = shift;
+		my $last = shift;
+		return( "Hello, $first, I see your last name is $last\n" );
+	}
+
+You'll notice that Perl will complain about use of an uninitialized variable when trying to read $ARGV[0].  Once you work out any problems in your program, you can remove the "use warnings" to get rid of this message.
+
+There's only one new thing here, really:
+
+	chomp( $name = <STDIN> );
+
+<STDIN> prompts the user to type their name (if one wasn't typed as command line parameters).  It stops when they hit return.
+
+chomp() is a function that is very useful - you'll see it frequently.  It cleans up input to remove any trailing non-printing bits (like the return).
+
+Perl does the $name = <STDIN> first, and chomp() is performed on the resulting $name.  You could do this as well:
+
+	$name = <STDIN>;
+	chomp( $name );
+
+But the tendency in Perl is to combine lines when possible.  It's easy to get carried away with this and render code unreadable, which gives Perl it's reputation for being indeciperable.  So try not to get carried away.
+
+This program only does minimal error checking.  It determines if any command line parameters were passed by checking the first one only.  It doesn't look for a last name, and it doesn't try to check if first and last name are valid names at all.  If there are no command line parameters passed, it trusts that the user will type a name when prompted.  You can create nonsensical output by typing unexpected input.  Part of programming is expecting the unexpected, or at least checking for it, and figuring out how to deal with it gracefully.
 
 
-loops
+Files
 
-for
-while
-foreach
+Perl isn't actually an acronym (note it's not all caps).  But Larry Wall, creator of Perl says it's short for "Practical Extraction and Report Language."
 
-
-
-input
+Perl was created by Wall to parse through files and generate reports.  This is what it excels at.  As a result, Perl has strong file handling capabilities.
 
 
 
+OPEN()
+CLOSE()
+READ()
+PRINT()
 
-files
+come up with a sample log file to parse and a task to do with it
+maybe parse to a date range?
+
+
+date	username	terminal
+2012-12-14	johnsmith	term02
+2013-01-01	johnsmith	term02
+2013-01-05	byrancranston	localhost
+2013-02-12	johnsmith	term02
+2013-02-28	dannyboyle	term03
+2013-04-01	bryancranston	localhost
+2013-04-30	dannyboyle	term03
+2013-05-01	johnsmith	term02
+
+
+
 
 
 
 
 regular expressions
 
-
-
-
-
 debugging
 
+hashes
 
-
-
-
-Variables
-
-One convenient thing about Perl is you don't have to worry too much about how your data is represented in memory.  Some languages like C have multiple variable types which store data in different ways.  Perl only really has one type - called a scalar.  There are also arrays, which are a collection of scalars.  There is a special type of array called a hash, which is one of the great features of Perl.
-
-Scalar variables start with a '$'.  Arrays start with an '@'.  Hashes start with a '%'.
-
-Perl will convert between different types of variables for you as needed. This is convenient, but has the downside that Perl may not be as efficient or optimized as a result. Perl isn't necessarily the best choice for resource-constrained applications.
-
-You have to tell Perl about your variables, or "declare" them.  You use the "my" keyword to declare variables.  A single "my" can declare multiple variables when enclosed in parenthesis:
-
-my $variable;
-my ( $foo, $bar );
-
-You put data into or read data from a variable with the '=' assignment operator:
-
-$variable = "blah";
-$foo = $variable;
-$bar = 42;
-
-The operation depends on which side of the '=' the variable is on.  Read on the right, write on the left.
-
-Perl has a bunch of specialized variables, like $_, $1, @ARGV (and many more).  You cannot name a variable the same as one of these special variables, but you can use any alphanumeric string as a variable name.  Variable names, like everything in Perl, are case-sensitive.
-
-
-Expressions
-
-A variable isn't the only thing that can be on the right of the equal sign.  A variable used this way is one form of an expression, and any expression can be used on the right side of the equal sign.
-
-Other types of expressions are strings ("Hello, World!\n"), arithmetic (1+1), conditional operators, and the output of functions (built-in or user defined).
-
-We illustrate the various types of expressions in 06_expressions.pl:
-
-#!/usr/bin/perl
-use strict;
-
-my $helloworld = "Hello, World!";     # assigning string at time of delcaration
-my ( $i, $j );
-my $result;
-my ( $foo, $bar );
-
-$i = 0;                               # assigning a number to a scalar
-$bar = $i + 42;                       # assigning the result of an arithmetic expression
-$foo = $bar;                          # assigning the value of a variable
-$result = print "$helloworld\n";      # assigning the output of a function
-$j = ( $i == 0 );                     # assigning the result of a conditional operator
-
-print "The result of the print function is: \"$result\"\n";print "\$i: \"$i\"\n";
-print "\$j: \"$j\"\n";
-print "\$foo: \"$foo\"\n";
-print "\$bar: \"$bar\"\n";
-
-
-Which results in this output:
-
-$ perl 06_expressions.pl
-Hello, World!
-The result of the print function is: "1"
-$i: "0"
-$j: "1"
-$foo: "42"
-$bar: "42"
-
-As mentioned before, we can declare more than one variable with a single "my" by making them a list and enclosing them in parenthesis.
-
-Next we have some examples of different types of expressions being assigned to variables.
-
-$i = 0; assigns the numeric zero into the variable $1.
-
-$bar = $i + 42; takes the value of $i (0) and adds 42, putting the result in $bar.
-
-$foo = $bar; takes the value of $bar (42) and puts it in $foo.
-
-$result = print "$helloworld\n"; calls the print function and puts the result into $result. The print function returns true if print was successful. A Boolean true in Perl  is represented by a numeric 1.  A Boolean false is anything other than a 1, usually a special value called undef, or undefined. Print almost always succeeds, so this put 1 into $result.
-
-$j = ( $i == 0 ); introduces a new operator, the equality test "==".  It test the value of the variable on the left ($i) against the expression on the right (0) and if they are equal, the result is true (or 1).  If they are not equal, the result is undef.
-
-One of the most common Perl mistakes is to use the assignment operator "=" and the equality operator "==".  If we did the wrong thing:
-
-$j = ( $i = 0 );
-
-It would not generate an error, but the result would be very different.  It would have assigned the numeric value zero to $i and then assigned the value of $i (0) to $j.  So instead of $j being at set of $i being true, we would have inadvertently assigned the wrong value to both $i and $j.
-
-
-One of the nice things about Perl is it tries its best to convert different types of data for you on the fly.  When a scalar variable is used in a string expression, the value of that variable is converted into a string and substituted.  So when we did:
-
-print "\$i: \"$i\"\n";
-
-We have a couple new escape characters here: \$ and \".  Both of these are used to insert characters into a string that would otherwise be interpreted as the start of a variable name or a double quote character.
-
-So $i (the second one - since the \$ puts an actual '$' character into the string, the first \$i is actually the string "$i" rather than the variable) contains a numeric zero, which is turned into the string "0" and printed.
-
-If the variable already contains a string, the conversion is easier:
-
-$result = print "$helloworld\n";
-
-The variable $helloworld, which contains the string "Hello, World!", is simply replaced by the string.
-
-
-Input
-
-These programs all do the same exact thing every time, which is kind of pointless.  You don't want to have to write a new program each time you want to do something different, so we need a way to get external information to the program.  A common way to do this in Perl is with command line arguments.  03_echo.pl:
-
-#!/usr/bin/perl
-use strict;
-
-print "@ARGV\n";
-
-Arrays start with '@', so $ARGV is an array.  It's a special variable in Perl - it contains the command line arguments.  So now we can type some additional things on the command line:
-
-$ perl 03_echo.pl these are arguments
-these are arguments
-
-We see what happens to an array in a string context?  It gets converted to a string, in the nicest way possible.
-
-If we did this:
-
-print @ARGV;
-
-we would get the following output:
-
-$ perl -e 'print @ARGV;' these are argumentsthesearearguments
-Besides the lack of a \n at the end, notice the lack of spaces. Perl splits up arguments amongst the elements of the array @ARGV. This is helpful in this case, so we can get the arguments individually. To access the individual elements of an Array, we use square brackets to identify which:
-
-04_echo.pl
-
-#!/usr/bin/perl
-use strict;
-
-if ( $ARGV[0] eq undef ) {
-     print "Please type your name\n";
-} else {
-     print "Hello, @ARGV[0], I see your last name is @ARGV[1]\n";
-}
-
-So now if you type your name as arguments to 04_echo.pl, you get the following:
-
-$ perl 04_echo.pl Theron Trowbridge
-Hello, Theron, I see your last name is Trowbridge
-
-But what happens if you don't type anything?
-
-$ perl 04_echo.pl
-Please type your name
-
-Some changes here.  First, since what we're expecting to be typed is a string, we are using the scalar context of the array @ARGV.  $ARGV[0] means the first item of @ARGV in scalar (string) context.  Putting @ARGV[0] or @ARGV[1] inside a double-quoted string automatically converts the array item to scalar context.  We could have used $ARGV[0] and $ARGV[1] as well.
-
-$ARGV[0] means the first item?  Yeah - in Perl like most programming languages, you start counting at 0 (zero).  I know this can be confusing at first.  Get used to it, and even if you are in a position that you could start counting from 1, start with 0.
-
-We're using "eq" instead of "==" to compare the first argument.  "==" is a numeric equality operator, but "eq" is a string equality operator.  Again, we're expecting strings, so we want to use "eq".  "undef" is the keyword that means undefined.  So if the first argument is empty, the expression is true, so the first code block is executed (print "Please type your name\n";).  If something was typed, the expression will be false, so it executes the else code block (print "Hello, @ARGV[0], I see your last name is @ARGV[1]\n";).
-
-You can check for multiple if values
-
-if ( $a eq "a" ) {
-     ;
-} elsif ( $a eq "b" ) {
-     ;
-} else {
-     ;
-}
-
-You use if for the first test, each of the elsif are evaluated if the preceding tests are false.  Evaluation stops when one of the tests is true.  If none of the tests are true, the else{} block is executed.
-
-You can make this work with the numerical equality operator if you really want to:
-
-if ( @ARGV[0] == "" )
-
-"" is an empty string, which a numerical value of zero, or null, which is the same as not typing anything.  But this is a special case, and you can't use "==" (easily) to test if a particular string was typed, so it's best to get in the habit of using "eq" for strings.
-
-OK, this is all great, but the program says "type your name" so why can't you just type your name?  That's another form of input - user interactivity.
-
-Try 07_echo_name.pl
-
-#!/usr/bin/perl
-use strict;
-
-my ( $name, @full_name );
-
-if ( $ARGV[0] eq undef ) {
-     print "Please type your name\n";
-     chomp( $name = <STDIN> );
-     @full_name = split( /\s+/, $name );
-     print "Hello, @full_name[0], I see your last name is @full_name[1]\n";
-} else {
-     print "Hello, @ARGV[0], I see your last name is @ARGV[1]\n";
-}
-
-Now, you can type your name as arguments to the script or you can respond when it says type your name:
-
-$ perl 07_echo_name.pl
-Please type your name
-Theron Trowbridge
-Hello, Theron, I see your last name is Trowbridge
-
-<STDIN> is in input operator.  Specifically it's a line input operator that reads from the keyboard.  You can read from a file in a similar manner.  But we'll get to that in a bit.
-
-chomp() is a function that removes extraneous whitespace from a string.  We use it in this case because otherwise the return that you press after typing your name will get included in the input.
-
-We could make this longer if we wanted:
-
-$name = <STDIN>;
-chomp( $name );
-
-But the tendency in Perl is to combine lines when possible.  It's easy to get carried away with this and render code unreadable, which gives Perl it's reputation for being indeciperable.  So try not to get carried away.
-
-Notice that we have two very similar lines that differ only in the array items being used?  One repeated line is not that big a deal, but it's easy to have large duplicate blocks of code, which makes your code bigger and less efficient.  And if you make a change to it in one place but not in all, you can have unexpected results.
-
-Any time you have common code you want to be able to call from multiple points in your code, you can create a subroutine.
-
-08_echo_name:
-
-#!/usr/bin/perl
-use strict;
-
-my ( $name, @full_name );
-
-if ( $ARGV[0] eq undef ) {
-     print "Please type your name\n";
-     chomp( $name = <STDIN> );
-     @full_name = split( /\s+/, $name );
-     print( respond( $full_name[0], $full_name[1] ) );
-} else {
-     print( respond( $ARGV[0], $ARGV[1] ) );
-}
-
-sub respond {
-     my $first = @_[0];
-     my $last = @_[1];
-     return( "Hello, $first, I see your last name is $last\n" );
-}
-
-"sub" defines a subroutine.  In this case, "respond" is the name of the subroutine, and is the way you call it from the rest of the program.
-
-Subroutines can receive arguments just like Perl programs, but they use another special array "@_".
-
-Subroutines can return a value, using the "return" function.  The function call becomes an expression that evaluates to the return value.
-
-I made the sub more complicated than it needed to be to illustrate that subs can have their own variables.
-
-The variables $name and @full_name are global - they are available to the entire program.  But $first and $last are local to the subroutine respond.  The portion of the program that a variable is available to is called scope.
-
-Scope can get confusing. It is possible to have two variables with the same name but different scope.
-
-In fact, you can declare a variable inside a { } block of an if statement, and the variable will only exist inside that code block.  This might not be terribly useful, but it is important to keep in mind.
-
-
-Files
-
-
-for/foreach/while
-
-
-Regular Expressions
-
-
-Hashes
-
-
-Packages/object-oriented
-
+packages/object-oriented programming
 
 cpan
 
