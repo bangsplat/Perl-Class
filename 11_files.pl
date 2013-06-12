@@ -1,13 +1,25 @@
 #!/usr/bin/perl
 
-# enforce good programming practices
-use strict;
+use strict;			# enforce good programming practices
 
-use Getopt::Long;	# module that parses command line options
+use Getopt::Long;	# module that parses command line options and GetOptions()
 
+# define our variables
 my ( $input_param, $output_param, $start_param, $end_param );
 my ( $help_param, $version_param, $debug_param, $line_date );
 
+# parse the command line parameters
+# the perldoc entry has more information but here are the basics:
+# we are defining pairs of values - the value to read, and the variable to put it into
+# => is the same as a comma, but it implies association
+# '|' indicates an option, so you can type --input or -i
+# after the input string, "=s" indicates the input expects a string as a value
+# 	so --input myfilename.txt
+# there is also a numeric value, indicated by "=i"
+# after the input string, '!' indicates the input is a on/off switch
+# 	and does not require a value
+# and can be negated with "no"
+# 	so --debug or --nodebug
 GetOptions( 'input|i=s'		=>	\$input_param,
 			'output|o=s'	=>	\$output_param,
 			'start=s'		=>	\$start_param,
@@ -33,6 +45,9 @@ if ( $version_param ) {
 	print "11_files.pl version 0\n";
 	exit();
 }
+# exit() is a function that causes the program to quit
+# it may not actually be the best way to exit in these circumstances
+# but it's how I do it
 
 # display help message if requested, then quit
 if ( $help_param ) {
@@ -92,7 +107,7 @@ open( INPUT_FILE, "<", $input_param )
 # INPUT_FILE is a file handle that we will use to refer to the file later
 # the "<" indicates the file will be opened read only
 # open() returns a result based on the success of the opening
-# if there is an error, the or statement displays an error message  and quits
+# if there is an error, the or statement displays an error message and quits
 
 # open output file
 if ( $debug_param ) { print "DEBUG: opening output file $output_param\n"; }
@@ -119,21 +134,40 @@ while ( <INPUT_FILE> ) {
 	if ( /^([0-9]{4}-[0-9]{2}-[0-9]{2})\t/ ) {
 		# the date will be in the variable $1
 		# now we want to remove the dashes from the date, as above so we can compare it
+		if ( $debug_param ) { print "DEBUG: match $1\n"; }
 		$line_date = $1;
 		$line_date =~ s/-//g;	# get rid of dashes from the data for comparison
 	} else {
 		# if we don't have a match, the line doesn't start with a properly formatted date
 		# we don't want to risk a false match, so empty out $line_date
+		if ( $debug_param ) { print "DEBUG: no match\n"; }
 		$line_date = "";
 	}
-	
-	# if the date from the line is on or after the start date, and also
-	# before or on the end date, write the line to the output file
-	# && means and - the result is true only if the two statements to the left and right 
-	# are also true
-	if ( ( $line_date >= $start_param  ) && ( $line_date <= $end_param ) ) {
+
+	# we want to output dates within our range
+	# by this, we mean that our line date is actually a date,
+	# and the value is on or after our start date
+	# and the value is before or on our end date
+	# we can test this by checking $line_date is not ""
+	# 	an empty string has a special value called undef (undefined)
+	# 	we use the ne ("not equal to") stringwise compare operator to check
+	# and also that the numerical value of the date is greater than or equal to the start date
+	# 	we will use the >= numerical compare operator
+	# and also that the numerical value of the date is less than or equal to the end date
+	# 	we will use the <= numerical compare operator
+	# all three of these have to be true for the date to be valid
+	# 	so we use the && bitwise and operator
+	# 	the result is true only if the two statements to the left and right
+	# we group the tests with parenthesis to indicate the order of precedence
+	# in this case it's not necessary, but I think of the tests in this order
+	if ( $line_date ne undef &&
+		( ( $line_date >= $start_param  ) && ( $line_date <= $end_param ) ) ) {
+		if ( $debug_param ) { print "$line_date is in range\n"; }
 		print OUTPUT_FILE "$_\n";
-		# unfortunately, the opposite of read() is not write()
+		# to write data to a file, we use print()
+		# but we specify an open filehandle
+		# if you don't specify a filehandle, Perl defaults to STDOUT
+		# so STDOUT is really a special file that output to the screen instead of the disk
 	}
 }
 
