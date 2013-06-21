@@ -1027,10 +1027,10 @@ chomp() is a function that is very useful - you'll see it frequently.  It cleans
 
 Perl does the $name = <STDIN> first, and chomp() is performed on the resulting $name.  You could do this as well:
 
-	$name = <STDIN>;
+	my $name = <STDIN>;
 	chomp( $name );
 
-But the tendency in Perl is to combine lines when possible.  It's easy to get carried away with this and render code unreadable, which gives Perl it's reputation for being indeciperable.  So try not to get carried away.
+But the tendency in Perl is to combine lines when possible.  It's easy to get carried away with this and render code unreadable, which gives Perl it's reputation for being indecipherable.  So try not to get carried away.
 
 This program only does minimal error checking.  It determines if any command line parameters were passed by checking the first one only.  It doesn't look for a last name, and it doesn't try to check if first and last name are valid names at all.  If there are no command line parameters passed, it trusts that the user will type a name when prompted.  You can create nonsensical output by typing unexpected input.  Part of programming is expecting the unexpected, or at least checking for it, and figuring out how to deal with it gracefully.
 
@@ -1041,36 +1041,57 @@ Perl isn't actually an acronym (note it's not all caps).  But Larry Wall, creato
 
 Perl was created by Wall to parse through files and generate reports.  This is what it excels at.  As a result, Perl has strong file handling capabilities.
 
+To read from or write to a file, we have to open it using the open() function.  We refer to open files with filehandles.  When we are done with a file, we close it with the close() function.
+
+Writing to a file is easy.  There is, unfortunately, no write() function.  Instead, we use the print() function, specifying the filehandle.
+
+There are multiple ways to read from a file.
+
+Text files can be read a line at a time using the diamond operator specifying the filehandle.  This is convenient for parsing through log files and such.
+
+For reading more than one line at a time, or from binary files, we can use the read() function.
 
 
-OPEN()
-CLOSE()
-READ()
-PRINT()
+Regular Expressions
 
-come up with a sample log file to parse and a task to do with it
-maybe parse to a date range?
+One of the most powerful features of Perl, particularly for parsing files, are regular expressions.  Entire books have been written about Regular Expressions, so we can only scratch the surface.
+
+// (or m//) is the matching operator.  If the expression inside the slashes, it evaluates to true.  We use the =~ operator to indicate what variable to perform the match on.
+
+	my $search_text = "foo";
+	if ( $search_text =~ /foo/ ) { print "match!\n"; }
+
+For the most part, in regular expressions, characters match themselves.  There are a number of special characters.  A period ('.') matches any character, for example.  To match one of these special character, you must escape them with a backslash.  \. would match a literal period.
+
+s/// the substitution operator.  Any match between the first two slashes is replaced by the expression between the last two.
+
+	my $search_text = "foo";
+	$search_text =~ s/f//;	# replace 'f' with nothing
+	# $search_text is now "oo"
+
+Another seriously useful feature of regular expressions is backreferences.  If part of an expression surrounded by parenthesis, a match for that part is placed into a special variable and can be used later.  You can have up to 9 backreferences in an expression, and they are stored in variables named $1, $2, $3, etc.
+
+	my $search_text = "2013-06-20";
+	$search_text =~ s/([0-9]{4})-([0-9]{2})-([0-9]{2})/$2\/$3\/$1/;
+	# $search_text is reformatted to "06/20/2013"
+
+Square brackets indicate groups of characters to match on.  [0-9] match any number from 0-9.  Curly braces indicate a number of repeats of the previous character, so [0-9]{4} matches any four-digit number from 0000 to 9999.
 
 
-date	username	terminal
-2012-12-14	johnsmith	term02
-2013-01-01	johnsmith	term02
-2013-01-05	byrancranston	localhost
-2013-02-12	johnsmith	term02
-2013-02-28	dannyboyle	term03
-2013-04-01	bryancranston	localhost
-2013-04-30	dannyboyle	term03
-2013-05-01	johnsmith	term02
+Debugging
+
+When things go wrong, it can be difficult to figure out what happened.
+
+Perl has a debugger mode which can be helpful, but it's a bit complex.  I usually put in a variable which is a debug flag, and at key points, I check for the flag and print status and variable values to the shell.
+
+
+11_files.pl
 
 
 
 
 
 
-
-regular expressions
-
-debugging
 
 hashes
 

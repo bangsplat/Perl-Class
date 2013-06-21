@@ -11,7 +11,7 @@ my ( $help_param, $version_param, $debug_param, $line_date );
 # parse the command line parameters
 # the perldoc entry has more information but here are the basics:
 # we are defining pairs of values - the value to read, and the variable to put it into
-# => is the same as a comma, but it implies association
+# => is (basically) the same as a comma, but is often used to indicate association
 # '|' indicates an option, so you can type --input or -i
 # after the input string, "=s" indicates the input expects a string as a value
 # 	so --input myfilename.txt
@@ -56,23 +56,23 @@ if ( $help_param ) {
 	print "\t--input | -i <filename> - the log file to parse\n";
 	print "\t--output | -o <filename> - the file to output parsed file\n";
 	print "\t--start <YYYY-MM-DD> - the start date to extract\n";
-	print "\t--end <YYYY-MM-DD> - the end date to extract\n";
+	print "\t--end <YYYY-MM-DD> - the end date to extract (optional)\n";
 	print "\t--help | -? - display his message\n";
 	exit();
 }
 
 # validate our passed parameters and set some defaults if necessary
-if ( $input_param eq undef ) {
-	print "Please specify an input file\n";
-	exit();
-	## we could prompt for one if we wanted to
-	## or look at the first passed parameter to see if it looks like a filename
-}
 
-if ( $output_param eq undef ) {
-	print "Please speify an output file\n";
-	exit();
-	## we could also make up a file name based on the input file name
+if ( $input_param eq undef ) {
+	# if an input file wasn't explicitly specified,
+	# grab the first parameter and use that as the input file name
+	# if this happens not to be an actual file, we'll get an error when we try to open it
+	# if no parameters are passed, complain about needing an input file
+	if ( @ARGV[0] eq undef ) {
+		print "Please specify an input file\n";
+		exit();
+	}
+	$input_param = @ARGV[0];
 }
 
 # default start and stop dates to forever if not specified
@@ -109,27 +109,31 @@ open( INPUT_FILE, "<", $input_param )
 # open() returns a result based on the success of the opening
 # if there is an error, the or statement displays an error message and quits
 
-# open output file
+# open output file (if an output file was specified)
 if ( $debug_param ) { print "DEBUG: opening output file $output_param\n"; }
-open( OUTPUT_FILE, ">", $output_param )
-	or die "Can't create file $output_param\n";
-# ">" opens the file for writing
+if ( $output_param ne undef ) {
+	open( OUTPUT_FILE, ">", $output_param ) or die "Can't create file $output_param\n";
+	# ">" opens the file for writing
+}
 
 # read input file
 if ( $debug_param ) { print "DEBUG: reading input file\n"; }
+# there are multiple ways of reading a file
+# we're going to use the <> operator which returns the next line from a file
+# while() loops as long as the expression inside the parenthesis evaluates to true
+# in Perl, anything other than 0 (zero) is true, so each line will be true
+# so while( <FILE> ) {} loops once for each line in a file
 while ( <INPUT_FILE> ) {
-	# while() loops until the expression returns false
-	# <FILE> returns one line from the open file handle FILE
-	# Any return value evaluates to true, so while(<FILE>) loops once per line in the file
-	# Result of <> is stored in the special variable $_
-	chomp();	# get rid of the newline at the end of the line
+	# the result of <> is stored in the special variable $_
+	chomp();
+	# chomp() gets rid of the newline at the end of a line
 	# chomp() operates on $_ if no variable is specified
 	if ( $debug_param ) {print "DEBUG: reading line: $_\n"; }
 	
 	# use regular expressions to get the date at the start of the line
 	# // is a matching operator - if the regular expression between the slashes matches $_
 	# the statement evaluates to true
-	# the portion between the parenthesis is a backreference
+	# the portion of the regular expression between the parenthesis is a backreference
 	# it is placed in a special variable $1 for use later
 	if ( /^([0-9]{4}-[0-9]{2}-[0-9]{2})\t/ ) {
 		# the date will be in the variable $1
@@ -163,7 +167,11 @@ while ( <INPUT_FILE> ) {
 	if ( $line_date ne undef &&
 		( ( $line_date >= $start_param  ) && ( $line_date <= $end_param ) ) ) {
 		if ( $debug_param ) { print "$line_date is in range\n"; }
-		print OUTPUT_FILE "$_\n";
+		if ( $output_param eq undef ) {
+			print "$_\n";
+		} else {
+			print OUTPUT_FILE "$_\n";
+		}
 		# to write data to a file, we use print()
 		# but we specify an open filehandle
 		# if you don't specify a filehandle, Perl defaults to STDOUT
@@ -171,6 +179,9 @@ while ( <INPUT_FILE> ) {
 	}
 }
 
-# close both files
+# close input file
 close( INPUT_FILE );
-close( OUTPUT_FILE );
+# if we opened an output file, close it
+if ( $output_param ne undef ) {
+	close( OUTPUT_FILE );
+}
