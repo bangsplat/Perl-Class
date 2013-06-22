@@ -1087,8 +1087,50 @@ Perl has a debugger mode which can be helpful, but it's a bit complex.  I usuall
 
 11_files.pl
 
+Lots of new things in this one.
+
+Relying on the standard @ARGV array can be very limiting.  Many Linux command line programs use more complicated and flexible command line options.  Perl has a standard module called Getopt::Long that gives us very sophisticated command line option options.
+
+To take advantage of this module, we have to use it first.
+
+	use Getopt::Long;
+
+	my ( $input_param, $output_param, $start_param, $end_param );
+	my ( $help_param, $version_param, $debug_param, $line_date );
+
+	GetOptions( 'input|i=s'		=>	\$input_param,
+				'output|o=s'	=>	\$output_param,
+				'start=s'		=>	\$start_param,
+				'end=s'			=>	\$end_param,
+				'help|?'		=>	\$help_param,
+				'version'		=>	\$version_param,
+				'debug!'		=>	\$debug_param );
+
+Then we need to define some variables that the contents of the command line options.
+
+Finally, we use the GetOptions() function to parse the command line options.  GetOptions() is very powerful and complicated, but here are the basics:
+
+We're defining pairs of values - a command line option and a variable to put the value of that option in to.  We are using the => operator to assign an option to a variable, to make the parameters for GetOptions() more clear, but => is effectively the same thing as a comma.
+
+The command line options are preceded by a dash for single character option, or a double dash for a multi-character option.  An option can have multiple choices, separated by a pipe character '|'.  So, in this case, we can use --input or -i.
+
+Some options are just boolean flags (such as --help, --version, or --debug).  If we add an exclamation point, we can negate the flag with no (such as --nodebug). The variable is loaded with true if the option is added to the command line (--debug), false if it is negated (--nodebug), and is left undefined if it is not present on the command line.
+
+If we follow the option with a equal sign, the option expects a value.  The character after the equal sign indicates the type of value.  =s indicates a string.  =i indicates a numeric value.  So, for input, we can put in "--input logfile.txt".  The value passed is put in the variable.  If the option is not passed, the variable is left undefined.
+
+The variable specified is escaped with a backslash because we want to pass the variable itself and not the contents of the variable.
 
 
+
+
+
+
+
+
+
+
+
+#####
 
 
 
