@@ -1078,13 +1078,6 @@ Another seriously useful feature of regular expressions is backreferences.  If p
 Square brackets indicate groups of characters to match on.  [0-9] match any number from 0-9.  Curly braces indicate a number of repeats of the previous character, so [0-9]{4} matches any four-digit number from 0000 to 9999.
 
 
-Debugging
-
-When things go wrong, it can be difficult to figure out what happened.
-
-Perl has a debugger mode which can be helpful, but it's a bit complex.  I usually put in a variable which is a debug flag, and at key points, I check for the flag and print status and variable values to the shell.
-
-
 11_files.pl
 
 Lots of new things in this one.
@@ -1110,20 +1103,180 @@ Then we need to define some variables that the contents of the command line opti
 
 Finally, we use the GetOptions() function to parse the command line options.  GetOptions() is very powerful and complicated, but here are the basics:
 
-We're defining pairs of values - a command line option and a variable to put the value of that option in to.  We are using the => operator to assign an option to a variable, to make the parameters for GetOptions() more clear, but => is effectively the same thing as a comma.
+We're defining pairs of values - a command line option and a variable to put the value of that option in to.  We are using the => operator to assign an option to a variable, to make the parameters for GetOptions() more clear, but => is effectively the same thing as a comma (another oversimplification, but true enough in this case).
 
-The command line options are preceded by a dash for single character option, or a double dash for a multi-character option.  An option can have multiple choices, separated by a pipe character '|'.  So, in this case, we can use --input or -i.
+In the shell on the command line, options are preceded by a dash for single character option, or a double dash for a multi-character option.  An option can have multiple versions, separated by a pipe character '|' in GetOptions().  So, in this case, we can use "--input" or "-i".
 
-Some options are just boolean flags (such as --help, --version, or --debug).  If we add an exclamation point, we can negate the flag with no (such as --nodebug). The variable is loaded with true if the option is added to the command line (--debug), false if it is negated (--nodebug), and is left undefined if it is not present on the command line.
+Some options are just boolean flags (such as --help, --version, or --debug in the example).  If we add an exclamation point after the option, we can negate the flag on the command line with "no" (such as "--nodebug"). For boolean options, the variable is loaded with true if the option is added to the command line (--debug), false if it is negated (--nodebug), and undefined if it is not present on the command line.
 
-If we follow the option with a equal sign, the option expects a value.  The character after the equal sign indicates the type of value.  =s indicates a string.  =i indicates a numeric value.  So, for input, we can put in "--input logfile.txt".  The value passed is put in the variable.  If the option is not passed, the variable is left undefined.
+If we follow the option with a equal sign in GetOptions(), the option expects a value.  The character after the equal sign indicates the type of value.  "=s" indicates a string.  "=i" indicates a numeric value.  So, for input, we can put in "--input logfile.txt".  The value "logfile.txt" is put in the variable.  If the option is not passed, the variable is left undefined.
 
 The variable specified is escaped with a backslash because we want to pass the variable itself and not the contents of the variable.
 
 
+Debugging
+
+When things go wrong, it can be difficult to figure out what happened.
+
+Perl has a debugger mode which can be very helpful, but it's a big complex.  I usually put in a --debug option and at key points, I check for the option and print status and variables to the shell.
+
+	if ( $debug_param ) { }
+
+It can add a lot of lines of code, but when developing a program, it's very helpful to make sure that everything is going correctly and your data looks the way you think it does.  And when you come across unexpected behaviors (otherwise known as bugs), it can help you figure out the situation leading to the bug.
+
+
+In our program, we're going to parse through a logfile that looks like this:
+
+	date	username	terminal
+	2012-12-14	johnsmith	term02
+	2013-01-01	johnsmith	term02
+	2013-01-05	byrancranston	localhost
+	2013-02-12	johnsmith	term02
+	2013-02-28	dannyboyle	term03
+	2013-04-01	bryancranston	localhost
+	2013-04-30	dannyboyle	term03
+	2013-05-01	johnsmith	term02
+
+Our program is going to extract lines that fall between dates and output them to a file or the terminal.
+
+We're handling dates in a very rudimentary manner.  It helps to do some validation to make sure that the user doesn't put in some wonky data that causes problems.
+
+	if ( !( $start_param =~ m/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/ ) ) {
+		$start_param = "0000-00-00";
+	}
+
+The matching regular expression here looks for a date formatted like YYYY-MM-DD.  The caret (^) at the start of the expression indicates the beginning of the line being matched.  The dollar sign ($) indicates the end of the line.  This makes the match be exact - any extra characters will invalidate the match.
+
+The exclamation point (!) outside the parenthesis containing the expression with the regular expression match is a negation operator.  Read it as "not".  So if the start_param variable does not match the YYYY-MM-DD format, the whole expression is true, and the variable will be set to 0000-00-00.
+
+We're using 0000-00-00 and 9999-99-99 as the beginning and end of time.  Which isn't really quite accurate, but it will do for the time being.  No computers existed before the year zero, and we will probably not be using Perl once we get to the year 9999.  Maybe.  But who knows?  Remember the whole Y2K thing?  The fewer assumptions you make about things like this, the less likely you'll have these sorts of problems.
+
+Historically, Perl has had a very wonky way of dealing with dates.  This has improved somewhat, but the way time is represented is still somewhat arbitrary - starting at midnight on 1 January 1970 GMT (yes, some of us are older than time itself).
+
+Perl provides a couple mechanisms for dealing with dates.  We could use one of the date/time modules, load the date from the log file into a date/time object, and use the module's functions to do the comparison.  That's probably a good idea if this were a professional script that was expected to work for years to come.
+
+Then we remove the dashes from the dates using the regular expression substitution operator.  This makes it easy to compare dates as numeric values.
+
+	$start_param =~ s/-//g;
+	$end_param =~ s/-//g;
+
+Then we use the open() function to open the input file.
+
+	open( INPUT_FILE, "<", $input_param )
+		or die "Can't open input file $input_param\n";
+
+open() takes a filehandle (which we get to make up, but it has to be unique in the program, though it is traditional to use all uppercase filehandle names), a mode indicator (in this case "<" means read only), and a file name.  open() attempts to open the file and if successful, the file is associated with the filehandle, and it returns true.  If the file cannot be opened, open() returns false, so we check for this and give an error using die().  die() prints a message to STDOUT and terminates the program.
+
+	open( OUTPUT_FILE, ">", $output_param )
+		or die "Can't create file $output_param\n";
+
+If an output file was specified, we open that, using the ">" write only mode.  If the file does not exist, it is created.
+
+	if ( $output_param ne undef ) {
+		open( OUTPUT_FILE, ">", $output_param )
+			or die "Can't create file $output_param\n";
+	}
+
+If no output file was specified, we will output to STDOUT.
+
+With our input file open, we need to read through the file.  We're going to do that with the diamond operator, reading one line at a time.
+
+	while ( <INPUT_FILE> ) {
+
+The diamond operator (<INPUT_FILE>) returns the next line of the file referenced by the filehandle INPUT_FILE.  The diamond operator evaluates to the line from the file, so as long as there is another line in the file, it will evaluate to true, keeping the while loop alive.
+
+The result of the diamond operator is stored in the special variable $_.
+
+		chomp();
+
+chomp() is a function that removes any whitespace or newlines from the start or end of a string.  We want to do this to strip the newline off the end of the line read from the file.  If no string is specified, chomp() works on $_.
+
+Next we want to use a regular expression to grab the date at the start of the line.  We are going to use the regular expression match operator, looking for a YYYY-MM-DD at the start of the line, followed by a tab (the escape character \t).  Additionally, we are using parenthesis around the date part as a backrreference to store the date part.
+
+		if ( /^([0-9]{4}-[0-9]{2}-[0-9]{2})\t/ ) {
+			$line_date = $1;
+			$line_date =~ s/-//g;
+		} else {
+			$line_date = "";
+		}
+
+If the first part of the line matches, the expression returns true, and the date is put into the special variable $1.  We want to stash it in a variable we can change and then get ride of the dashes (the same as the input options).
+
+If there is no match, we want to empty out our variable, as it might have an old value in it and we don't want old date screwing up the next step.
+
+Since both dates (what were's pulling from the file and what we're comparing to) are numbers, we can just do a numeric comparison.
+
+We want to check to see if the date from the file is greater than or equal to the start date, AND less than or equal to the end date.  AND we need to make sure there is a date to check.  So that's three checks.  We can do them as nested ifs:
+
+if ( a ) {
+	if ( b ) {
+		if ( c ) {
+		}
+	}
+}
+
+Fortunately, we don't have to.  We can use the AND operator (&&) to say it in one if statement:
+
+if ( a && b && c) {
+}
+
+You can specify precedence of the tests with parenthesis.  It doesn't matter in this case, but I use them to arrange them the way I'm thinking about it.
+
+		if ( $line_date ne undef &&
+			( ( $line_date >= $start_param  ) && ( $line_date <= $end_param ) ) ) {
+
+Finally, we need to output the line if it matches.  If no output file was specified, just print it to STDOUT.  Otherwise, we write to our output file with the print() function, using the filehandle to indicate which file to write to.
+
+			if ( $output_param eq undef ) {
+				print "$_\n";
+			} else {
+				print OUTPUT_FILE "$_\n";
+			}
+		}
+	}
+
+The while() loop finishes when we reach the end of the input file.  We're pretty much done, but we should clean up and close our files.  This isn't strictly necessary, as Perl should close the files when the program ends, but it's best to be sure.
+
+We use the close() function to close the file.  We're check to see if we even opened an output file before closing it.  This is not strictly necessary, as if there is no OUTPUT_FILE filehandle, the close() will fail, but there's no real consequence to that.  But it's good habit to check these things whenever possible.
+
+	close( INPUT_FILE );
+	if ( $output_param ne undef ) {
+		close( OUTPUT_FILE );
+	}
+
+
+So if we run this program specifying a subset of dates in the log file, we get this:
+
+$ ./11_files.pl --input logfile.txt --start 2013-01-01 --end 2013-04-01
+2013-01-01	johnsmith	term02
+2013-01-05	byrancranston	localhost
+2013-02-12	johnsmith	term02
+2013-02-28	dannyboyle	term03
+2013-04-01	bryancranston	localhost
+
+
+Binary Files
+
+So that's fine and dandy for text files, but not everything is a text file, is it?
+
+No problem.  Perl can read and write binary data as well.
 
 
 
+
+#####
+
+
+
+
+
+Hashes
+
+Regular expressions are a killer feature in Perl when it comes to parsing and manipulating data.  Hashes are the killer feature for analyzing and organizing data.
+
+Think of hashes as a simple database functionality.
+
+Hashes are variables that are kind of like linked arrays.  Instead of having to keep track of array positions, you use a key value to store a value.
 
 
 

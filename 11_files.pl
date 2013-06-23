@@ -75,9 +75,20 @@ if ( $input_param eq undef ) {
 	$input_param = @ARGV[0];
 }
 
-# default start and stop dates to forever if not specified
-if ( $start_param eq undef ) { $start_param = "0000-00-00"; }
-if ( $end_param eq undef ) { $end_param = "9999-99-99"; }
+# validate that the start and end dates are what we expect
+# if the start date is not in the right format or undefined,
+# set to 0000-00-00 - beginning of time (CE)
+if ( !( $start_param =~ m/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/ ) ) {
+	if ( $debug_param ) { print "DEBUG: start date is not right format\n"; }
+	$start_param = "0000-00-00";
+}
+
+# if the end date is not in the right format or undefined,
+# set to 9999-99-99 - a date that will be in the future for a long time
+if ( !( $end_param =~ m/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/ ) ) {
+	if ( $debug_param ) { print "DEBUG: end date is not right format\n"; }
+	$end_param = "9999-99-99";
+}
 
 # display the adjusted parameters if debug mode is enabled
 if ( $debug_param ) {
