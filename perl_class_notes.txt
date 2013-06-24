@@ -1278,288 +1278,76 @@ But since it's not a text file, we need to tell Perl to treat it differently.  W
 
 	binmode( MYFILE );				# treat as binary file
 
-The next step is going to be to read the entire MP3 file, so we need to know how big the file is.  Perl has some special file test operators, one of which returns the size of a file.  This is one of the more unfortunately archaic elements in Perl, as it looks more like a command line option than a function or operator.
+Because we are going to read the file, we may need to know how big it is.  Perl has some special file test operators, one of which (-s) returns the size of a file.  This is one of the more unfortunately archaic elements in Perl, as it looks more like a command line option than a function or operator.
 
 We stick the result of the -s size operator into a variable for future use.
 
 	$filesize = -s MYFILE;
 
-
+Instead of using the diamond operator to read the file, we're going to use the read() function.  We give it a filehandle, a variable to put the read data into, and an amount of data to read.
 
 	$result = read( MYFILE, $buffer, 10 );
+
+First step is to verify that there actually is a an ID3v2 tag in the file.  The first ten bytes of a ID3v2 tagged MP3 file will tell us if there is a tag, what version it is, how big it is, and some additional information.  If the read succeeds, the variable $buffer will contain the 10 bytes read.
+
+For convenience we're going to split up the 10 bytes into smaller chunks.  Even though the data is binary data, we can treat it like a string and use the substr() function, which takes a string, a starting point (with 0 being the first character of the string) and a length.
 
 	$id3v2_identifier = substr( $buffer, 0, 3 );
 	$id3v2_version = substr( $buffer, 3, 2 );
 	$id3v2_flags = substr( $buffer, 5, 1 );
 	$id3v2_tag_size = substr( $buffer, 6, 4 );
 
+If this is an ID3v2 tag, the first three bytes are a string - "ID3".  So we can do a string comparison with the first three bytes.  If they aren't a match, we want to close the file and quit.
 
-sub read_v2_tag {
-	my $id3v2_output_string;
-
-	open( MYFILE, "<", $input_param )
-		or die "Could not open file $input_param\n";
-	binmode( MYFILE );				# treat as binary file
-	$filesize = -s MYFILE;			# get the size of the file
-	if ( $debug_param ) { print "$input_param file size: $filesize\n"; }
-	
-	$result = read( MYFILE, $buffer, 10 );
-	if ( $debug_param ) { print "DEBUG: Header read result: $result\n"; }
-	
-	$id3v2_identifier = substr( $buffer, 0, 3 );
-	$id3v2_version = substr( $buffer, 3, 2 );
-	$id3v2_flags = substr( $buffer, 5, 1 );
-	$id3v2_tag_size = substr( $buffer, 6, 4 );
-	
-	if ( $info_param ) {
-		$id3v2_output_string .= "File\t$input_param\n";
-		$id3v2_output_string .= "Identifier\t$id3v2_identifier\n";
-	}
 	if ( $id3v2_identifier ne "ID3" ) {
 		close( MYFILE );
 		return "";
 	}
+
+The version is made up of two one-byte unsigned integers (which can be a value between 0 and 255).  We need to split them up and figure out what the binary value is.
+
+Now, there are a number of ways to do this.  You can get the numeric value of a single byte with the ord() function.  ord() would work in this case, but if you have a multi-byte integer, the math gets a little cumbersome.
+
+Meet unpack(), your best friend for binary file parsing.
+
 	$id3v2_major_version = unpack( "W", substr( $id3v2_version, 0, 1 ) );
 	$id3v2_minor_version = unpack( "W", substr( $id3v2_version, 1, 1 ) );
-	$id3v2_version_string = "ID3v2.$id3v2_major_version.$id3v2_minor_version";
-	if ( $info_param ) { $id3v2_output_string .= "ID3 version\t$id3v2_version_string\n"; }
-	
-	$id3v2_flag_bit_string = unpack( "B8", $id3v2_flags );
-	$id3v2_flag_unsynchonization = substr( $id3v2_flag_bit_string, 1, 1 );
-	$id3v2_flag_extended_header = substr( $id3v2_flag_bit_string, 2, 1 );
-	$id3v2_flag_experimental = substr( $id3v2_flag_bit_string, 3, 1 );
-	$id3v2_flag_footer_present = substr( $id3v2_flag_bit_string, 4, 1 );
-	
-	if ( $info_param ) {
-		if ( $id3v2_flag_unsynchonization ) { $id3v2_output_string .= "Unsychronization\ttrue\n"; }
-		else { $id3v2_output_string .= "Unsychronization\tfalse\n"; }
-			
-		if ( $id3v2_flag_extended_header ) { $id3v2_output_string .= "Extended header\ttrue\n"; }
-		else { $id3v2_output_string .= "Extended header\tfalse\n"; }
-		
-		if ( $id3v2_flag_experimental ) { $id3v2_output_string .= "Experimental indicator\ttrue\n"; }
-		else { $id3v2_output_string .= "Experimental indicator\tfalse\n"; }
-		
-		if ( $id3v2_flag_footer_present ) { $id3v2_output_string .= "Footer present\ttrue\n"; }
-		else { $id3v2_output_string .= "Footer present\tfalse\n"; }
-	}		
-	
-	$id3v2_tag_size_value = synchsafe_value( $id3v2_tag_size, 4 );
-		
-	if ( $info_param ) { $id3v2_output_string .= "Tag size\t$id3v2_tag_size_value\n"; }
-	
-	# read the rest of the tag
-	$result = read( MYFILE, $buffer, $id3v2_tag_size_value );
-	if ( $debug_param ) { print "DEBUG: Read rest of tag result: $result\n"; }
-	
-	$buffer_pointer = 0;
-	
-	# parse extended header
-	if ( $id3v2_flag_extended_header ) {
-		# extended header format:
-		# 	Extended Header Size	4 * %0xxxxxxx
-		# 	Number of flag bytes	$01
-		# 	Extended Flags			$xx
-		# the extended header size is a synchsafe value
 
-		$id3v2_extended_header_size = substr( $buffer, $buffer_pointer, 4 );
-		$buffer_pointer += 4;
-		
-		my $id3v2_extended_header_size_value = synchsafe_value( $id3v2_extended_header_size, 4 );
-		if ( $info_param ) {
-			$id3v2_output_string .= "Extended header size\t$id3v2_extended_header_size_value\n";
-		}
-		$buffer_pointer += $id3v2_extended_header_size_value
-		
-		## for now, skipping the extended header
-		## need to figure out how to parse the flags
-		## the documentation is a bit unclear
-	}
-	
-	## frame format:
-	#	Frame ID      $xx xx xx xx  (four characters)
-	#	Size      4 * %0xxxxxxx
-	#	Flags         $xx xx
-	
+unpack() takes a string (though you would normally use it with a variable, as in this case) and converts it into a value based on it's type.  The data type indicator "W" is for an unsigned char value.  unpack() can handle just about every data type you can think of, plus some you haven't.  For a complete list of the data types that unpack() can handle, check out the perldoc entry:
+
+http://perldoc.perl.org/functions/pack.html
+
+(You probably also have a copy of the perldoc documentation installed on your computer.  You can type:
+
+	perldoc -f unpack
+
+in the shell to get the documentation on the function unpack.)
+
+The opposite of unpack() is pack(), which takes values and packs them into binary strings that can be written to a file.
+
+We also use unpack() with the data type "B8" to take the one byte of ID3 flags into a bitstring - a string of the characters '0' and '1', matching the bits in the byte from the header into the variable $id3v2_flags.
+
+	$id3v2_flag_bit_string = unpack( "B8", $id3v2_flags );
+
+Don't pay too much attention to the synchsafe_value() subroutine.  ID3v2.4 has a mechanism called syncsafe to prevent part of the tag from looking like MP3 data.  It involves spreading out the binary data across an extra byte and adding zero bits to avoid all-bits-on values.
+
+The subroutine was a pain in the butt to figure out and I didn't add enough comments to remind me how it works without spending some time to deconstruct.  Let this be a warning to you about comments - don't skimp on them because you never know when you're going to look at the code next and if it's more than six hours, you probably won't completely remember what you figured out.
+
+I spend a lot of time parsing through audio files, which often have recurring data structures, and no way of knowing how many to expect.  So I use a little trick to read each chunk of a file until finding the right one:
+
 	$done = 0;
 	while ( !$done ) {
-		if ( $debug_param ) { print "\n"; }
-		
-		$frame_id = substr( $buffer, $buffer_pointer, 4 );
-		$frame_is_padding = ( ord( $frame_id ) == 0 );
-		if ( $debug_param && $frame_is_padding ) { print "DEBUG: Frame is padding\n"; }
-		# if the frame_id starts with 0x00, the frame is padding
-		# padding must come after the last frame, so we can safely skip the rest of the tag
-		## per the ID3 spec:
-		## 	Furthermore it MUST NOT have any padding when a tag footer is added to the tag
-		## so we should check if the footer present flag is set and warn if there is padding
-		
-		if ( !$frame_is_padding ) {
-			$buffer_pointer += 4;
-			if ( $debug_param ) { print "frame_id: $frame_id\n"; }
-			
-			$frame_size = substr( $buffer, $buffer_pointer, 4 );
-			$buffer_pointer += 4;
-			$frame_size_value = synchsafe_value( $frame_size, 4 );
-			if ( $debug_param ) { print "frame_size_value: $frame_size_value\n"; }
-			
-			$frame_flags = substr( $buffer, $buffer_pointer, 2 );
-			$buffer_pointer += 2;
-			if ( $debug_param ) { print "frame_flags: $frame_flags\n"; }
-			
-			$frame_flags_bit_string = unpack( "B16", $frame_flags );
-			if ( $debug_param ) { print "DEBUG: frame_flags_bit_string: $frame_flags_bit_string\n"; }
-			
-			$tag_alter_preservation_flag = substr( $frame_flags_bit_string, 1, 1 );
-			$file_alter_preservation_flag = substr( $frame_flags_bit_string, 2, 1 );
-			$read_only_flag = substr( $frame_flags_bit_string, 3, 1 );
-			$grouping_identity_flag = substr( $frame_flags_bit_string, 9, 1 );
-			$compression_flag = substr( $frame_flags_bit_string, 12, 1 );
-			$encryption_flag = substr( $frame_flags_bit_string, 13, 1 );
-			$unsynchronization_flag = substr( $frame_flags_bit_string, 14, 1 );
-			$data_length_indicator_flag = substr( $frame_flags_bit_string, 15, 1 );
-			
-			if ( $debug_param ) {
-				if ( $tag_alter_preservation_flag ) { print "Frame should be discarded if altered\n"; }
-				else { print "Frame should be preserved if altered\n"; }
-				
-				if ( $file_alter_preservation_flag ) { print "Frame should be discarded if file altered\n"; }
-				else { print "Frame should be preserved if file altered\n"; }
-				
-				if ( $read_only_flag ) { print "Frame is read-only\n"; }
-				else { print "Frame is not read-only\n"; }
-				
-				if ( $grouping_identity_flag ) { print "Frame contains group information\n"; }
-				else { print "Frame does not contain group information\n"; }
-				
-				if ( $compression_flag ) { print "Frame is compressed using zlib [zlib] deflate method\n"; }
-				else { print "Frame is not compressed\n"; }
-				
-				if ( $encryption_flag ) { print "Frame is encrypted\n"; }
-				else { print "Frame is not encrypted\n"; }
-				
-				if ( $unsynchronization_flag ) { print "Frame has been unsyrchronised\n"; }
-				else { print "Frame has not been unsynchronised\n"; }
-				
-				if ( $data_length_indicator_flag ) { print "A data length Indicator has been added to the frame\n"; }
-				else { print "There is no Data Length Indicator\n"; }
-			}
-			
-			$frame_data = substr( $buffer, $buffer_pointer, $frame_size_value );
-			$buffer_pointer += $frame_size_value;
-			if ( $debug_param ) {
-				if ( $frame_id eq "APIC" ) { print "frame_data: <picture>\n"; }
-				else { print "frame_data: $frame_data\n"; }
-			}
-			
-			# if frame is a text frame, get rid of the encoding byte
-			if ( substr( $frame_id, 0, 1 ) eq "T" ) {
-				if ( $debug_param ) { print( "DEBUG: $frame_id is a text frame\n" ); }
-				$frame_data = decode_text( $frame_data );
-			} else {
-				if ( $debug_param ) { print( "DEBUG: $frame_id is NOT a text frame\n" ); }
-			}
-			
-			# if frame is a 'COMM' comment frame, get rid of the encoding byte
-			if ( $frame_id eq "COMM" ) {
-				if ( $debug_param ) { print( "DEBUG: $frame_id is a comment frame\n" ); }
-				$frame_data = decode_comment( $frame_data );
-			}
-						
-			## add to output
-			## create sub that takes frame_id and returns a text description
-
-			# if no frame is specified, output everything, including frame IDs
-			# if a frame is specified, output only it
-			# substitute "[image]" for APIC frame data
-			if ( $frame_param eq undef ) {
-				if ( $frame_id eq "APIC" ) { $id3v2_output_string .= "$frame_id\t[picture]\n"; }
-				else { $id3v2_output_string .= "$frame_id\t$frame_data\n"; }
-			} else {
-				if ( $frame_param eq $frame_id ) {
-					if ( $frame_id eq "APIC" ) { $id3v2_output_string .= "[picture]\n"; }
-					else { $id3v2_output_string .= "$frame_data\n"; }
-				}
-			}
-			
-			# if frame contains a picture, process it.
-			if ( $image_param && ( $frame_id eq "APIC" ) ) {
-
-				###
-				$apic_pointer = 0;
-				$apic_text_encoding = unpack( "W", substr( $frame_data, $apic_pointer++, 1 ) );
-
-				$apic_mime_type = "";
-				$string_done = 0;
-				while ( !$string_done ) {
-					$my_character = substr( $frame_data, $apic_pointer++, 1 );
-					if ( unpack( "W", $my_character ) == 0 ) { $string_done = 1; }
-					$apic_mime_type .= $my_character;
-				}
-				
-				$apic_picture_type = unpack( "W", substr( $frame_data, $apic_pointer++, 1 ) );
-				
-				$apic_description = "";
-				$string_done = 0;
-				while ( !$string_done ) {
-					$my_character = substr( $frame_data, $apic_pointer++, 1 );
-					if ( unpack( "W", $my_character ) == 0 ) { $string_done = 1; }
-					$apic_description .= $my_character;
-				}
-				
-				$apic_picture_data = substr( $frame_data, $apic_pointer, $frame_size_value - $apic_pointer );
-				
-				if ( $debug_param ) {
-					print "DEBUG: APIC text encoding: $apic_text_encoding\n";
-					print "DEBUG: APIC MIME type: $apic_mime_type\n";
-					print "DEBUG: APIC picture type: $apic_picture_type\n";
-					print "DEBUG: APIC description: $apic_description\n";
-				}
-				
-				# write the picture data out to a file
-				$image_file = $input_param;
-				$image_file =~ s/\..+//g;					#	strip off the extension
-				$image_file_extension = $apic_mime_type;
-				$image_file_extension =~ s/^.+\///;			#	get the picture type from the MIME type
-				$image_file .= "_$apic_picture_type" . 	"." . $image_file_extension;
-				open( IMAGE_FILE, '>', $image_file ) or die $!;
-				binmode( IMAGE_FILE );
-				print IMAGE_FILE $apic_picture_data;
-				close( IMAGE_FILE );
-			}
-			
-		} else {
-			# if the frame is padding, skip the rest of the tag
-			$done = 1;
-		}
-		
-		if ( $debug_param ) { print "DEBUG: buffer_pointer: $buffer_pointer\ttag_size: $id3v2_tag_size_value\n"; }
-		
-		# if we've come to the end of the tag, end
-		if ( $buffer_pointer >= $id3v2_tag_size_value ) { $done = 1; }
+		# do the parsing of each chunk here
+		if ( this_is_the_right_chunk) { $done = 1; }
 	}
-	
-	# clean up
-	close( MYFILE );
-	
-	return( $id3v2_output_string );
-}
 
+Since while loops on true, we could have a $keep_going flag that starts out as true, and set it to false when we find out bit.  Then the next loop won't execute.
 
+I like the flag being $done.  Personal preference.  You can do it however you like.  But to generate a true when $done is false, we negate it with the exclamation point.  So you can read it as "while not done".
 
+Perl has an until() loop as well, which loops as long as the condition is false.  This would seem to work better for our needs, but until() checks the condition at the end of the loop, guaranteeing to execute the loop at least once, which may not be good.  while() checks the condition at the start of the loop, and if it starts out false, it does not execute the loop even once.
 
-
-
-
-
-
-
-
-
-#####
-
-
-
+Everything else is pretty much variations on this - reading chunks of the file, using substr() and unpack() to figure out what information is there, and acting on it.
 
 
 Hashes
@@ -1575,46 +1363,10 @@ Hashes are variables that are kind of like linked arrays.  Instead of having to 
 
 
 
+
+
 #####
-
-
-
-
-hashes
-
-packages/object-oriented programming
-
-cpan
-
-
 
 http://perldoc.perl.org/
 
-
 http://programming-motherfucker.com/
-
-
-
-
-
-
-
-
-statements
-variables
-data representation
-expressions
-blocks
-operators
-functions
-subroutines
-regular expressions
-hashes
-input
-output
-files
-
-
-
-
-
