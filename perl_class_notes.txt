@@ -166,7 +166,7 @@ We're adding a few things here:
 
 The first line is a comment.  Comments begin with '#'.  Everything from the '#' to the end of the line is ignored by Perl.  Comments can be used for documentation or notes.
 
-#!/usr/bin/perl is a special comment that tells the shell what program to use to execute the script.  Perl doesn't care about this, but Mac and Linux computers do.  Windows, not so much.  But it's good practice to include it anyway.  For Linux or the Mac, it allows you to skip the "perl" part in the command.  But you may have to change the path listed to match where Perl is installed.  On Linux and Mac computers, you can figure out the right path with the which command:
+#!/usr/bin/perl is a special comment, called a shebang, that tells the shell what program to use to execute the script.  Perl doesn't care about this, but Mac and Linux computers do.  Windows, not so much.  But it's good practice to include it anyway.  For Linux or the Mac, it allows you to skip the "perl" part in the command.  But you may have to change the path listed to match where Perl is installed.  On Linux and Mac computers, you can figure out the right path with the which command:
 
 $ which perl
 /usr/bin/perl
